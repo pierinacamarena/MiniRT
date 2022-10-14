@@ -139,7 +139,6 @@ int	main(int argc, char *argv[])
 	char		*file_contents;
 	double		u;
 	double		v;
-	int			sample_size;
 
 	if (argc != 2)
 	{
@@ -163,24 +162,10 @@ int	main(int argc, char *argv[])
 		for (int j = 0; j < HEIGTH; j++)
 		{
 			pixel_color = create_color_struct(0, 0, 0);
-			sample_size = 0;
-			for (int k = i - 2; k <= i + 2; k++)
-			{
-				for (int l = j - 2; l <= j + 2; l++)
-				{
-					u = ((double)k / (WIDTH - 1.0) - 0.5) * VIEW_WIDTH;
-					v = ((double)l / (HEIGTH - 1.0) - 0.5) * VIEW_HEIGTH;
-					if (k >= 0 && k < WIDTH && l >= 0 && l < HEIGTH)
-					{
-						ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
-						pixel_color = color_add(pixel_color, ray_color(ray, params));
-						sample_size++;
-					}
-				}
-			}
-			pixel_color.red = (double)pixel_color.red / (double)sample_size;
-			pixel_color.green = (double)pixel_color.green / (double)sample_size;
-			pixel_color.blue = (double)pixel_color.blue / (double)sample_size;
+			u = ((double)i / (WIDTH - 1.0) - 0.5) * VIEW_WIDTH;
+			v = ((double)j / (HEIGTH - 1.0) - 0.5) * VIEW_HEIGTH;
+			ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
+			pixel_color = color_add(pixel_color, ray_color(ray, params));
 			put_pixel(&img, i, HEIGTH - j - 1, rgb_to_color(pixel_color));
 		}
 	}
