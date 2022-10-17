@@ -4,8 +4,6 @@
 #define RATIO (16.0 / 9.0)
 #define WIDTH 400
 #define HEIGTH ((double)WIDTH / RATIO)
-#define VIEW_HEIGTH 2.0
-#define VIEW_WIDTH (2.0 * RATIO)
 #define FOCAL_LEN 1.0
 
 typedef struct s_data {

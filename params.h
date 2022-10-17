@@ -8,6 +8,7 @@
 #define CYLINDER 0x2
 #define PLANE 0x4
 #define T_MAX 100000
+#define PI 3.14159265358979
 
 typedef struct s_ambient {
 	double	light_ratio;

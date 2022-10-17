@@ -13,6 +13,11 @@
 
 #define BUFSIZE 4096
 
+double	degree_to_radian(int degrees)
+{
+	return ((double)degrees / 360.0 * 2.0 * PI);
+}
+
 char	*read_file(const char *filename)
 {
 	char	buf[BUFSIZE];
@@ -139,6 +144,9 @@ int	main(int argc, char *argv[])
 	char		*file_contents;
 	double		u;
 	double		v;
+	double		view_width;
+	double		view_height;
+	double		theta;
 
 	if (argc != 2)
 	{
@@ -157,13 +165,16 @@ int	main(int argc, char *argv[])
 	mlx_win = mlx_new_window(mlx, WIDTH, HEIGTH, "mini_rt");
 	img.img = mlx_new_image(mlx, WIDTH, HEIGTH);
 	img.addr = mlx_get_data_addr(img.img, &img.bits, &img.line, &img.endian);
+	theta = degree_to_radian(params.camera->fov);
+	view_width = 2.0 * tan(theta / 2.0) * FOCAL_LEN;
+	view_height = view_width / RATIO;	
 	for (int i = 0; i < WIDTH; i++)
 	{
 		for (int j = 0; j < HEIGTH; j++)
 		{
 			pixel_color = create_color_struct(0, 0, 0);
-			u = ((double)i / (WIDTH - 1.0) - 0.5) * VIEW_WIDTH;
-			v = ((double)j / (HEIGTH - 1.0) - 0.5) * VIEW_HEIGTH;
+			u = ((double)i / (WIDTH - 1.0) - 0.5) * view_width;
+			v = ((double)j / (HEIGTH - 1.0) - 0.5) * view_height;
 			ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
 			pixel_color = color_add(pixel_color, ray_color(ray, params));
 			put_pixel(&img, i, HEIGTH - j - 1, rgb_to_color(pixel_color));
