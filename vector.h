@@ -22,6 +22,7 @@ t_vector		vec_create(double x, double y, double z);
 t_vector		vec_add(t_vector v, t_vector w);
 t_vector		vec_diff(t_vector v, t_vector w);
 t_vector		vec_scale(t_vector v, double t);
+t_vector		vec_cross(t_vector v, t_vector w);
 double			vec_dot(t_vector v, t_vector w);
 double			vec_length(t_vector v);
 t_vector		unit_vec(t_vector v);

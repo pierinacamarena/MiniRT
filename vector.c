@@ -40,6 +40,18 @@ inline t_vector	vec_scale(t_vector v, double t)
 	return (ret);
 }
 
+inline t_vector	vec_cross(t_vector v, t_vector w)
+{
+	double	x;
+	double	y;
+	double	z;
+
+	x = v.y * w.z - v.z * w.y;
+	y = v.z * w.x - v.x * w.z;
+	z = v.x * w.y - v.y * w.x;
+	return (vec_create(x, y, z));
+}
+
 inline double	vec_dot(t_vector v, t_vector w)
 {
 	return (v.x * w.x + v.y * w.y + v.z * w.z);

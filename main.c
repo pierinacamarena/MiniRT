@@ -62,14 +62,16 @@ char	*read_file(const char *filename)
 
 t_vector	get_dir(double u, double v, t_camera camera)
 {
-	double	x;
-	double	y;
-	double	z;
+	t_vector	a;
+	t_vector	b;
+	t_vector	vup;
+	t_vector	dir;
 
-	x = u - camera.coord.x;
-	y = v - camera.coord.y;
-	z = camera.coord.z - FOCAL_LEN; //may have to change this
-	return (vec_create(x, y, z));
+	vup = vec_create(0, 1, 0);
+	a = unit_vec(vec_cross(camera.orient, vup));
+	b = unit_vec(vec_cross(a, camera.orient));
+	dir = vec_add(vec_add(vec_scale(a, u), vec_scale(b, v)), vec_scale(camera.orient, FOCAL_LEN));
+	return (unit_vec(dir));
 }
 
 double	hit_sphere(t_ray ray, t_sphere sphere)
@@ -115,19 +117,19 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 			
 t_color	ray_color(t_ray ray, t_params params)
 {
-	t_color		color;
+	//t_color		color;
 	t_obj		obj;
 	double		t;
-	t_vector	n;
+	//t_vector	n;
 
 	t = hit_object(ray, params.obj_set, &obj);
 	if (t < T_MAX)
 	{
-		n = unit_vec(vec_diff(ray_at(ray, t), obj.sphere.coord));
+		/*n = unit_vec(vec_diff(ray_at(ray, t), obj.sphere.coord));
 		color = create_color_struct((int)((n.x + 1.0) * 0.5 * 256.0),\
 		(int)((n.y + 1.0) * 0.5 * 256.0),\
-		(int)((n.z + 1.0) * 0.5 * 256.0));
-		return (color);
+		(int)((n.z + 1.0) * 0.5 * 256.0));*/
+		return (obj.sphere.rgb);
 	}
 	else
 		return (create_color_struct(0, 0, 0));
