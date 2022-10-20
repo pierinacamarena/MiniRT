@@ -13,12 +13,12 @@
 
 #define BUFSIZE 4096
 
-double	degree_to_radian(int degrees)
+static double	degree_to_radian(int degrees)
 {
 	return ((double)degrees / 360.0 * 2.0 * PI);
 }
 
-char	*read_file(const char *filename)
+static char	*read_file(const char *filename)
 {
 	char	buf[BUFSIZE];
 	int		fd;
@@ -93,6 +93,20 @@ double	hit_sphere(t_ray ray, t_sphere sphere)
 		return ((b * -1.0 - sqrt(discr)) / (2.0 * a));
 }
 
+double	hit_plane(t_ray ray, t_plane plane)
+{
+	double		t;
+
+	if (vec_dot(plane.orient, ray.dir) != 0)
+	{
+		t = vec_dot(plane.orient, vec_diff(plane.coord, ray.orig));
+		t /= vec_dot(plane.orient, ray.dir);
+	}
+	else
+		t = T_MAX;
+	return (t);
+}
+
 double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 {
 	double	t;
@@ -104,6 +118,15 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 		if (obj_set->type == SPHERE)
 		{
 			temp = hit_sphere(ray, obj_set->sphere);
+			if (temp > 0.0 && temp < t)
+			{
+				*obj = *obj_set;
+				t = temp;
+			}
+		}
+		else if (obj_set->type == PLANE)
+		{
+			temp = hit_plane(ray, obj_set->plane);
 			if (temp > 0.0 && temp < t)
 			{
 				*obj = *obj_set;
@@ -129,10 +152,12 @@ t_color	ray_color(t_ray ray, t_params params)
 		color = create_color_struct((int)((n.x + 1.0) * 0.5 * 256.0),\
 		(int)((n.y + 1.0) * 0.5 * 256.0),\
 		(int)((n.z + 1.0) * 0.5 * 256.0));*/
-		return (obj.sphere.rgb);
+		if (obj.type == SPHERE)
+			return (obj.sphere.rgb);
+		else if (obj.type == PLANE)
+			return (obj.plane.rgb);
 	}
-	else
-		return (create_color_struct(0, 0, 0));
+	return (create_color_struct(0, 0, 0));
 }
 
 int	main(int argc, char *argv[])
