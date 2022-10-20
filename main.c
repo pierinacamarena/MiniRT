@@ -13,6 +13,20 @@
 
 #define BUFSIZE 4096
 
+double			max(double a, double b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
+double			min(double a, double b)
+{
+	if (a < b)
+		return (a);
+	return (b);
+}
+
 static double	degree_to_radian(int degrees)
 {
 	return ((double)degrees / 360.0 * 2.0 * PI);
@@ -107,7 +121,19 @@ double	hit_plane(t_ray ray, t_plane plane)
 	return (t);
 }
 
-double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
+double	calculate_shadow(t_params param, t_vector p_hit, t_vector n_hit)
+{
+	t_vector	dir_light;
+	double		intensity;
+	intensity = 0;
+
+	dir_light = vec_diff(param.light->coord, p_hit);
+	intensity = 255 * max(0, vec_dot(unit_vec(dir_light), n_hit))* 2500 / vec_dot(dir_light, dir_light);
+	return (intensity);
+}
+
+
+double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vector *n_hit)
 {
 	double	t;
 	double	temp;
@@ -122,6 +148,10 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 			{
 				*obj = *obj_set;
 				t = temp;
+				*p_hit = ray_at(ray, t);
+				*n_hit = unit_vec(vec_diff(*p_hit, obj->sphere.coord));
+				// if ((vec_length(vec_diff(params.camera->coord, obj->sphere.coord))) < (obj->sphere.diameter/2))
+				// 	*n_hit = vec_scale(*n_hit, -1);
 			}
 		}
 		else if (obj_set->type == PLANE)
@@ -143,9 +173,15 @@ t_color	ray_color(t_ray ray, t_params params)
 	//t_color		color;
 	t_obj		obj;
 	double		t;
+	t_vector	p_hit;
+	t_vector	n_hit;
+	double			lum;
+	double			red;
+	double			green;
+	double			blue;
 	//t_vector	n;
 
-	t = hit_object(ray, params.obj_set, &obj);
+	t = hit_object(ray, params.obj_set, &obj, &p_hit, &n_hit);
 	if (t < T_MAX)
 	{
 		/*n = unit_vec(vec_diff(ray_at(ray, t), obj.sphere.coord));
@@ -153,7 +189,20 @@ t_color	ray_color(t_ray ray, t_params params)
 		(int)((n.y + 1.0) * 0.5 * 256.0),\
 		(int)((n.z + 1.0) * 0.5 * 256.0));*/
 		if (obj.type == SPHERE)
-			return (obj.sphere.rgb);
+		{
+			lum = calculate_shadow(params, p_hit, n_hit);
+			
+			red = min(255,(max(50.0, lum)));
+			// printf("red = %f\n", red);
+			// green = min(255,(max(0.0, lum)));
+			green = 0;
+			// printf("green = %f\n", green);
+			// blue = min(255,(max(0.0, lum)));
+			blue = 0;
+			// printf("blue = %f\n", blue);
+			return (create_color_struct((int)red, (int)green, (int)blue));
+			// return (obj.sphere.rgb);
+		}
 		else if (obj.type == PLANE)
 			return (obj.plane.rgb);
 	}

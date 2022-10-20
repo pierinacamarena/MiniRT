@@ -2,7 +2,7 @@
 #define SCREEN_H
 
 #define RATIO (16.0 / 9.0)
-#define WIDTH 400
+#define WIDTH 1050
 #define HEIGTH ((double)WIDTH / RATIO)
 #define FOCAL_LEN 1.0
 
