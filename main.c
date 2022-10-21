@@ -121,6 +121,44 @@ double	hit_plane(t_ray ray, t_plane plane)
 	return (t);
 }
 
+double	hit_cylinder(t_ray ray, t_cylinder cylinder)
+{
+	t_vector	oc;
+	double		a;
+	double		b;
+	double		c;
+	double		z;
+	double		discr;
+	double		t;
+	t_vector	vup;
+	t_vector	right;
+	t_vector	up;
+	t_vector	intersect;
+
+	vup = vec_create(0, 1, 0);
+	right = unit_vec(vec_cross(cylinder.orient, vup));
+	up = unit_vec(vec_cross(right, cylinder.orient));
+	oc = vec_diff(ray.orig, cylinder.coord);
+	a = pow(vec_dot(ray.dir, up), 2) + pow(vec_dot(ray.dir, right), 2);
+	b = 2 * (vec_dot(right, oc) * vec_dot(right, ray.dir) + vec_dot(up, oc) * vec_dot(up, ray.dir));
+	c = pow(vec_dot(right, oc), 2.0) + pow(vec_dot(up, oc), 2.0) - pow((cylinder.diameter / 2.0), 2);
+	discr = pow(b, 2.0) - 4.0 * a * c;
+	if (discr < 0.0)
+		return (-1.0);
+	t = (-1.0 * b - sqrt(discr)) / (2.0 * a);
+	intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
+	z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
+	{
+		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
+		intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
+		z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+		if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
+		return (-1.0);
+	}
+	return (t);
+}
+
 double	calculate_shadow(t_params param, t_vector p_hit, t_vector n_hit)
 {
 	t_vector	dir_light;
@@ -157,6 +195,15 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 		else if (obj_set->type == PLANE)
 		{
 			temp = hit_plane(ray, obj_set->plane);
+			if (temp > 0.0 && temp < t)
+			{
+				*obj = *obj_set;
+				t = temp;
+			}
+		}
+		else if (obj_set->type == CYLINDER)
+		{
+			temp = hit_cylinder(ray, obj_set->cylinder);
 			if (temp > 0.0 && temp < t)
 			{
 				*obj = *obj_set;
@@ -205,6 +252,8 @@ t_color	ray_color(t_ray ray, t_params params)
 		}
 		else if (obj.type == PLANE)
 			return (obj.plane.rgb);
+		else if (obj.type == CYLINDER)
+			return (obj.cylinder.rgb);
 	}
 	return (create_color_struct(0, 0, 0));
 }
