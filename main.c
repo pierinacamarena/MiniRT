@@ -83,6 +83,8 @@ t_vector	get_dir(double u, double v, t_camera camera)
 
 	vup = vec_create(0, 1, 0);
 	a = unit_vec(vec_cross(camera.orient, vup));
+	if (vec_dot(a, vup) != 0)
+		a = unit_vec(vec_cross(camera.orient, vec_create(1, 0, 0)));
 	b = unit_vec(vec_cross(a, camera.orient));
 	dir = vec_add(vec_add(vec_scale(a, u), vec_scale(b, v)), vec_scale(camera.orient, FOCAL_LEN));
 	return (unit_vec(dir));
@@ -137,6 +139,8 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 
 	vup = vec_create(0, 1, 0);
 	right = unit_vec(vec_cross(cylinder.orient, vup));
+	if (vec_dot(vup, right) != 0)
+		right = unit_vec(vec_cross(cylinder.orient, vec_create(1, 0, 0)));
 	up = unit_vec(vec_cross(right, cylinder.orient));
 	oc = vec_diff(ray.orig, cylinder.coord);
 	a = pow(vec_dot(ray.dir, up), 2) + pow(vec_dot(ray.dir, right), 2);
@@ -148,7 +152,7 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 	t = (-1.0 * b - sqrt(discr)) / (2.0 * a);
 	intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
 	z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
-	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
+	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0) || t < 0.0)
 	{
 		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
 		intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
@@ -182,6 +186,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 		if (obj_set->type == SPHERE)
 		{
 			temp = hit_sphere(ray, obj_set->sphere);
+			printf("temp %f\n", temp);
 			if (temp > 0.0 && temp < t)
 			{
 				*obj = *obj_set;
