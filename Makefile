@@ -11,7 +11,8 @@ OBJS	=	main.o\
 			free.o\
 			list.o
 
-HEADS	=	vector.h\
+HEADS	=	params.h\
+			vector.h\
 			ray.h\
 			color.h\
 			screen.h\

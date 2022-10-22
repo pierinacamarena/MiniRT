@@ -76,17 +76,22 @@ static char	*read_file(const char *filename)
 
 t_vector	get_dir(double u, double v, t_camera camera)
 {
-	t_vector	a;
-	t_vector	b;
-	t_vector	vup;
+	t_vector	right;
+	t_vector	up;
+	t_vector	temp;
 	t_vector	dir;
 
-	vup = vec_create(0, 1, 0);
-	a = unit_vec(vec_cross(camera.orient, vup));
-	if (vec_dot(a, vup) != 0)
-		a = unit_vec(vec_cross(camera.orient, vec_create(1, 0, 0)));
-	b = unit_vec(vec_cross(a, camera.orient));
-	dir = vec_add(vec_add(vec_scale(a, u), vec_scale(b, v)), vec_scale(camera.orient, FOCAL_LEN));
+	temp = vec_create(0, 1, 0);
+	right = vec_cross(camera.orient, temp);
+	if (vec_dot(camera.orient, right) != 0)
+	{
+		temp = vec_create(0, 0, 1);
+		right = vec_cross(camera.orient, temp);
+	}
+	up = vec_cross(right, camera.orient);
+	dir = vec_scale(right, u);
+	dir = vec_add(vec_scale(up, v), dir);
+	dir = vec_add(vec_scale(camera.orient, FOCAL_LEN), dir);
 	return (unit_vec(dir));
 }
 
@@ -97,6 +102,7 @@ double	hit_sphere(t_ray ray, t_sphere sphere)
 	double		b;
 	double		c;
 	double		discr;
+	double		t;
 
 	oc = vec_diff(ray.orig, sphere.coord);
 	a = vec_dot(ray.dir, ray.dir);
@@ -105,8 +111,10 @@ double	hit_sphere(t_ray ray, t_sphere sphere)
 	discr = pow(b, 2.0) - 4.0 * a * c;
 	if (discr < 0.0)
 		return (-1);
-	else
-		return ((b * -1.0 - sqrt(discr)) / (2.0 * a));
+	t = (b * -1.0 - sqrt(discr)) / (2.0 * a);
+	if (t < 0.0)
+		t = (b * -1.0 + sqrt(discr)) / (2.0 * a);
+	return (t);
 }
 
 double	hit_plane(t_ray ray, t_plane plane)
@@ -186,7 +194,6 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 		if (obj_set->type == SPHERE)
 		{
 			temp = hit_sphere(ray, obj_set->sphere);
-			printf("temp %f\n", temp);
 			if (temp > 0.0 && temp < t)
 			{
 				*obj = *obj_set;
@@ -263,6 +270,27 @@ t_color	ray_color(t_ray ray, t_params params)
 	return (create_color_struct(0, 0, 0));
 }
 
+void	test_sphere(t_ray ray, t_params params)
+{
+	t_sphere sphere = params.obj_set->sphere;
+
+	t_vector	oc;
+	double		a;
+	double		b;
+	double		c;
+	double		discr;
+	double		t;
+
+	oc = vec_diff(ray.orig, sphere.coord);
+	a = vec_dot(ray.dir, ray.dir);
+	b = 2.0 * vec_dot(oc, ray.dir);
+	c = vec_dot(oc , oc) - pow(sphere.diameter / 2.0, 2.0);
+	discr = pow(b, 2.0) - 4.0 * a * c;
+	t = (b * -1.0 - sqrt(discr)) / (2.0 * a);
+	if (t < 0.0)
+		t = (b * -1.0 + sqrt(discr)) / (2.0 * a);
+}
+	
 int	main(int argc, char *argv[])
 {
 	void		*mlx;
@@ -306,6 +334,8 @@ int	main(int argc, char *argv[])
 			u = ((double)i / (WIDTH - 1.0) - 0.5) * view_width;
 			v = ((double)j / (HEIGTH - 1.0) - 0.5) * view_height;
 			ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
+			if (i == (int)(WIDTH / 2) && j == (int)(HEIGTH / 2))
+				test_sphere(ray, params);
 			pixel_color = color_add(pixel_color, ray_color(ray, params));
 			put_pixel(&img, i, HEIGTH - j - 1, rgb_to_color(pixel_color));
 		}

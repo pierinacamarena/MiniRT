@@ -200,7 +200,7 @@ static void	get_sphere(t_params *params, t_parse_utils *utils)
 	match(COMMA_TOKEN, utils, params);
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
 	obj->sphere.coord.z = get_float(prev, params);
-	match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
 	obj->sphere.diameter = get_float(prev, params);
 	prev = match(INT_TOKEN, utils, params);
 	obj->sphere.rgb.red = get_int(prev, params);
