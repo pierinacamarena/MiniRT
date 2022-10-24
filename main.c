@@ -232,6 +232,8 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 				t = temp;
 				*p_hit = ray_at(ray, t);
 				*n_hit = unit_vec(vec_diff(*p_hit, vec_add(obj_set->cylinder.coord, vec_scale(obj_set->cylinder.coord, pz))));
+				if (vec_dot(unit_vec(vec_diff(*p_hit, params.camera->coord)), *n_hit) > 0)
+					*n_hit = vec_scale(*n_hit, -1);
 			}
 		}
 		obj_set = obj_set->next;
