@@ -131,7 +131,7 @@ double	hit_plane(t_ray ray, t_plane plane)
 	return (t);
 }
 
-double	hit_cylinder(t_ray ray, t_cylinder cylinder)
+double	hit_cylinder(t_ray ray, t_cylinder cylinder, double	*pz)
 {
 	t_vector	oc;
 	double		a;
@@ -160,6 +160,7 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 	t = (-1.0 * b - sqrt(discr)) / (2.0 * a);
 	intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
 	z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+	*pz = z;
 	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0) || t < 0.0)
 	{
 		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
@@ -187,6 +188,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 {
 	double	t;
 	double	temp;
+	double	pz;
 
 	t = T_MAX;
 	while (obj_set != NULL)
@@ -222,11 +224,14 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 		}
 		else if (obj_set->type == CYLINDER)
 		{
-			temp = hit_cylinder(ray, obj_set->cylinder);
+			pz = 0;
+			temp = hit_cylinder(ray, obj_set->cylinder, &pz);
 			if (temp > 0.0 && temp < t)
 			{
 				*obj = *obj_set;
 				t = temp;
+				*p_hit = ray_at(ray, t);
+				*n_hit = unit_vec(vec_diff(*p_hit, vec_add(obj_set->cylinder.coord, vec_scale(obj_set->cylinder.coord, pz))));
 			}
 		}
 		obj_set = obj_set->next;
@@ -272,14 +277,22 @@ t_color	ray_color(t_ray ray, t_params params)
 		else if (obj.type == PLANE)
 		{
 			lum = calculate_shadow(params, p_hit, n_hit);
-			red = 0;
-			green = min(255,(max(0.0, lum)));
+			green = 0;
+			red = min(255,(max(0.0, lum)));
 			blue = 0;
 			return (create_color_struct((int)red, (int)green, (int)blue));
 			// return (obj.plane.rgb);
 		}
 		else if (obj.type == CYLINDER)
-		{	return (obj.cylinder.rgb);}
+		{
+			lum = calculate_shadow(params, p_hit, n_hit);
+			red = 0;
+			green = min(255,(max(0.0, lum)));
+			blue = 0;
+			return (create_color_struct((int)red, (int)green, (int)blue));
+
+			//return (obj.cylinder.rgb);
+		}
 	}
 	return (create_color_struct(0, 0, 0));
 }
