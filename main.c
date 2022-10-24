@@ -296,27 +296,6 @@ t_color	ray_color(t_ray ray, t_params params)
 	}
 	return (create_color_struct(0, 0, 0));
 }
-
-void	test_sphere(t_ray ray, t_params params)
-{
-	t_sphere sphere = params.obj_set->sphere;
-
-	t_vector	oc;
-	double		a;
-	double		b;
-	double		c;
-	double		discr;
-	double		t;
-
-	oc = vec_diff(ray.orig, sphere.coord);
-	a = vec_dot(ray.dir, ray.dir);
-	b = 2.0 * vec_dot(oc, ray.dir);
-	c = vec_dot(oc , oc) - pow(sphere.diameter / 2.0, 2.0);
-	discr = pow(b, 2.0) - 4.0 * a * c;
-	t = (b * -1.0 - sqrt(discr)) / (2.0 * a);
-	if (t < 0.0)
-		t = (b * -1.0 + sqrt(discr)) / (2.0 * a);
-}
 	
 int	main(int argc, char *argv[])
 {
@@ -361,8 +340,6 @@ int	main(int argc, char *argv[])
 			u = ((double)i / (WIDTH - 1.0) - 0.5) * view_width;
 			v = ((double)j / (HEIGTH - 1.0) - 0.5) * view_height;
 			ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
-			if (i == (int)(WIDTH / 2) && j == (int)(HEIGTH / 2))
-				test_sphere(ray, params);
 			pixel_color = color_add(pixel_color, ray_color(ray, params));
 			put_pixel(&img, i, HEIGTH - j - 1, rgb_to_color(pixel_color));
 		}
