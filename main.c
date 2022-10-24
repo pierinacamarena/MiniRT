@@ -166,6 +166,7 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder, double	*pz)
 		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
 		intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
 		z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+		*pz = z;
 		if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
 		return (-1.0);
 	}
@@ -191,6 +192,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 	double	pz;
 
 	t = T_MAX;
+	(void)params;
 	while (obj_set != NULL)
 	{
 		if (obj_set->type == SPHERE)
@@ -202,8 +204,6 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 				t = temp;
 				*p_hit = ray_at(ray, t);
 				*n_hit = unit_vec(vec_diff(*p_hit, obj->sphere.coord));
-				if ((vec_length(vec_diff(params.camera->coord, obj->sphere.coord))) < (obj->sphere.diameter/2))
-					*n_hit = vec_scale(*n_hit, -1);
 			}
 		}
 		else if (obj_set->type == PLANE)
@@ -231,9 +231,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 				*obj = *obj_set;
 				t = temp;
 				*p_hit = ray_at(ray, t);
-				*n_hit = unit_vec(vec_diff(*p_hit, vec_add(obj_set->cylinder.coord, vec_scale(obj_set->cylinder.coord, pz))));
-				if (vec_dot(unit_vec(vec_diff(*p_hit, params.camera->coord)), *n_hit) > 0)
-					*n_hit = vec_scale(*n_hit, -1);
+				*n_hit = unit_vec(vec_diff(*p_hit, vec_add(obj_set->cylinder.coord, vec_scale(obj_set->cylinder.orient, pz))));
 			}
 		}
 		obj_set = obj_set->next;
