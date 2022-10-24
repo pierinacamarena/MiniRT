@@ -178,12 +178,12 @@ double	calculate_shadow(t_params param, t_vector p_hit, t_vector n_hit)
 	intensity = 0;
 
 	dir_light = vec_diff(param.light->coord, p_hit);
-	intensity = 255 * max(0, vec_dot(unit_vec(dir_light), n_hit))* 2500 / vec_dot(dir_light, dir_light);
+	intensity = 255 * max(0, vec_dot(unit_vec(dir_light), n_hit)) * 1500 /vec_dot(dir_light, dir_light);
 	return (intensity);
 }
 
 
-double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vector *n_hit)
+double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vector *n_hit, t_params params)
 {
 	double	t;
 	double	temp;
@@ -200,8 +200,8 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 				t = temp;
 				*p_hit = ray_at(ray, t);
 				*n_hit = unit_vec(vec_diff(*p_hit, obj->sphere.coord));
-				// if ((vec_length(vec_diff(params.camera->coord, obj->sphere.coord))) < (obj->sphere.diameter/2))
-				// 	*n_hit = vec_scale(*n_hit, -1);
+				if ((vec_length(vec_diff(params.camera->coord, obj->sphere.coord))) < (obj->sphere.diameter/2))
+					*n_hit = vec_scale(*n_hit, -1);
 			}
 		}
 		else if (obj_set->type == PLANE)
@@ -211,6 +211,13 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 			{
 				*obj = *obj_set;
 				t = temp;
+				*p_hit = ray_at(ray, t);
+				*n_hit = unit_vec(obj_set->plane.orient);
+				// como calcular la normal del plano
+				// *n_hit = vector_unidad de la normal del plano
+				// eq_vector(&n_hit, normalize(pl->normal_vec));
+				// if (scalaire_product(normalize(sub_vector(hit_point, cam_pos)), n_hit) > 0)
+				// 	eq_vector(&n_hit, float_x_vector(n_hit, -1));
 			}
 		}
 		else if (obj_set->type == CYLINDER)
@@ -240,7 +247,7 @@ t_color	ray_color(t_ray ray, t_params params)
 	double			blue;
 	//t_vector	n;
 
-	t = hit_object(ray, params.obj_set, &obj, &p_hit, &n_hit);
+	t = hit_object(ray, params.obj_set, &obj, &p_hit, &n_hit, params);
 	if (t < T_MAX)
 	{
 		/*n = unit_vec(vec_diff(ray_at(ray, t), obj.sphere.coord));
@@ -263,9 +270,16 @@ t_color	ray_color(t_ray ray, t_params params)
 			// return (obj.sphere.rgb);
 		}
 		else if (obj.type == PLANE)
-			return (obj.plane.rgb);
+		{
+			lum = calculate_shadow(params, p_hit, n_hit);
+			red = 0;
+			green = min(255,(max(0.0, lum)));
+			blue = 0;
+			return (create_color_struct((int)red, (int)green, (int)blue));
+			// return (obj.plane.rgb);
+		}
 		else if (obj.type == CYLINDER)
-			return (obj.cylinder.rgb);
+		{	return (obj.cylinder.rgb);}
 	}
 	return (create_color_struct(0, 0, 0));
 }
