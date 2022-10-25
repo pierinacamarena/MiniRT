@@ -238,61 +238,47 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vect
 	}
 	return (t);
 }
-			
+
+t_color	get_color(t_obj obj, double lum)
+{
+	double	red;
+	double	green;
+	double	blue;
+
+	if (obj.type == SPHERE)
+	{
+		red = min(255.0, max(0.0, obj.sphere.rgb.red + lum));
+		green = min(255.0, max(0.0, obj.sphere.rgb.green + lum));
+		blue = min(255.0, max(0.0, obj.sphere.rgb.blue + lum));
+	}
+	else if (obj.type == PLANE)
+	{
+		red = min(255.0, max(0.0, obj.plane.rgb.red + lum));
+		green = min(255.0, max(0.0, obj.plane.rgb.green + lum));
+		blue = min(255.0, max(0.0, obj.plane.rgb.blue + lum));
+	}
+	else if (obj.type == CYLINDER)
+	{
+		red = min(255.0, max(0.0, obj.cylinder.rgb.red + lum));
+		green = min(255.0, max(0.0, obj.cylinder.rgb.green + lum));
+		blue = min(255.0, max(0.0, obj.cylinder.rgb.blue + lum));
+	}
+	return (create_color_struct((int)red, (int)green, (int)blue));
+}
+
 t_color	ray_color(t_ray ray, t_params params)
 {
-	//t_color		color;
 	t_obj		obj;
 	double		t;
 	t_vector	p_hit;
 	t_vector	n_hit;
 	double			lum;
-	double			red;
-	double			green;
-	double			blue;
-	//t_vector	n;
 
 	t = hit_object(ray, params.obj_set, &obj, &p_hit, &n_hit, params);
 	if (t < T_MAX)
 	{
-		/*n = unit_vec(vec_diff(ray_at(ray, t), obj.sphere.coord));
-		color = create_color_struct((int)((n.x + 1.0) * 0.5 * 256.0),\
-		(int)((n.y + 1.0) * 0.5 * 256.0),\
-		(int)((n.z + 1.0) * 0.5 * 256.0));*/
-		if (obj.type == SPHERE)
-		{
-			lum = calculate_shadow(params, p_hit, n_hit);
-			
-			red = min(255,(max(50.0, lum)));
-			// printf("red = %f\n", red);
-			// green = min(255,(max(0.0, lum)));
-			green = 0;
-			// printf("green = %f\n", green);
-			// blue = min(255,(max(0.0, lum)));
-			blue = 0;
-			// printf("blue = %f\n", blue);
-			return (create_color_struct((int)red, (int)green, (int)blue));
-			// return (obj.sphere.rgb);
-		}
-		else if (obj.type == PLANE)
-		{
-			lum = calculate_shadow(params, p_hit, n_hit);
-			green = 0;
-			red = min(255,(max(0.0, lum)));
-			blue = 0;
-			return (create_color_struct((int)red, (int)green, (int)blue));
-			// return (obj.plane.rgb);
-		}
-		else if (obj.type == CYLINDER)
-		{
-			lum = calculate_shadow(params, p_hit, n_hit);
-			red = 0;
-			green = min(255,(max(0.0, lum)));
-			blue = 0;
-			return (create_color_struct((int)red, (int)green, (int)blue));
-
-			//return (obj.cylinder.rgb);
-		}
+		lum = calculate_shadow(params, p_hit, n_hit);
+		return (get_color(obj, lum));
 	}
 	return (create_color_struct(0, 0, 0));
 }
