@@ -97,7 +97,7 @@ static void	get_ambient_light(t_params *params, t_parse_utils *utils)
 		clean_exit(EXIT_FAILURE, params);
 	}
 	prev = match(INT_TOKEN | FLOAT_TOKEN, utils, params);
-	params->ambient->light_ratio = get_float(prev, params);
+	params->ambient->ambient_ratio = get_float(prev, params);
 	prev = match(INT_TOKEN, utils, params);
 	params->ambient->rgb.red = get_int(prev, params);
 	match(COMMA_TOKEN, utils, params);

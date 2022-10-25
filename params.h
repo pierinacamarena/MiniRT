@@ -11,7 +11,7 @@
 #define PI 3.14159265358979
 
 typedef struct s_ambient {
-	double	light_ratio;
+	double	ambient_ratio;
 	t_color	rgb;
 }	t_ambient;
 

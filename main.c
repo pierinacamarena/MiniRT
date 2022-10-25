@@ -131,7 +131,7 @@ double	hit_plane(t_ray ray, t_plane plane)
 	return (t);
 }
 
-double	hit_cylinder(t_ray ray, t_cylinder cylinder, double	*pz)
+double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 {
 	t_vector	oc;
 	double		a;
@@ -158,111 +158,128 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder, double	*pz)
 	if (discr < 0.0)
 		return (-1.0);
 	t = (-1.0 * b - sqrt(discr)) / (2.0 * a);
-	intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
+	intersect = ray_at(ray, t);
 	z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
-	*pz = z;
 	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0) || t < 0.0)
 	{
 		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
-		intersect = vec_add(ray.orig, vec_scale(ray.dir, t));
+		intersect = ray_at(ray, t);
 		z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
-		*pz = z;
 		if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
 		return (-1.0);
 	}
 	return (t);
 }
 
-double	calculate_shadow(t_params param, t_vector p_hit, t_vector n_hit)
+double	calculate_light(t_params param, t_vector p_hit, t_vector n_hit)
 {
 	t_vector	dir_light;
 	double		intensity;
-	intensity = 0;
 
 	dir_light = vec_diff(param.light->coord, p_hit);
-	intensity = 255 * max(0, vec_dot(unit_vec(dir_light), n_hit)) * 1500 /vec_dot(dir_light, dir_light);
-	return (intensity);
+	intensity = max(0.0, vec_dot(unit_vec(dir_light), n_hit));
+	return (param.light->bright_ratio * intensity);
 }
 
 
-double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj, t_vector *p_hit, t_vector *n_hit, t_params params)
+double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 {
 	double	t;
 	double	temp;
-	double	pz;
 
 	t = T_MAX;
-	(void)params;
 	while (obj_set != NULL)
 	{
 		if (obj_set->type == SPHERE)
-		{
 			temp = hit_sphere(ray, obj_set->sphere);
-			if (temp > 0.0 && temp < t)
-			{
-				*obj = *obj_set;
-				t = temp;
-				*p_hit = ray_at(ray, t);
-				*n_hit = unit_vec(vec_diff(*p_hit, obj->sphere.coord));
-			}
-		}
 		else if (obj_set->type == PLANE)
-		{
 			temp = hit_plane(ray, obj_set->plane);
-			if (temp > 0.0 && temp < t)
-			{
-				*obj = *obj_set;
-				t = temp;
-				*p_hit = ray_at(ray, t);
-				*n_hit = unit_vec(obj_set->plane.orient);
-				// como calcular la normal del plano
-				// *n_hit = vector_unidad de la normal del plano
-				// eq_vector(&n_hit, normalize(pl->normal_vec));
-				// if (scalaire_product(normalize(sub_vector(hit_point, cam_pos)), n_hit) > 0)
-				// 	eq_vector(&n_hit, float_x_vector(n_hit, -1));
-			}
-		}
 		else if (obj_set->type == CYLINDER)
+			temp = hit_cylinder(ray, obj_set->cylinder);
+		if (temp > 0.0 && temp < t)
 		{
-			pz = 0;
-			temp = hit_cylinder(ray, obj_set->cylinder, &pz);
-			if (temp > 0.0 && temp < t)
-			{
-				*obj = *obj_set;
-				t = temp;
-				*p_hit = ray_at(ray, t);
-				*n_hit = unit_vec(vec_diff(*p_hit, vec_add(obj_set->cylinder.coord, vec_scale(obj_set->cylinder.orient, pz))));
-			}
+			*obj = *obj_set;
+			t = temp;
 		}
 		obj_set = obj_set->next;
 	}
 	return (t);
 }
 
-t_color	get_color(t_obj obj, double lum)
+t_color	get_color(t_obj obj, double light, t_ambient ambient)
 {
 	double	red;
 	double	green;
 	double	blue;
 
+	red = (double)ambient.rgb.red * ambient.ambient_ratio;
+	green = (double)ambient.rgb.green * ambient.ambient_ratio;
+	blue = (double)ambient.rgb.blue * ambient.ambient_ratio;
 	if (obj.type == SPHERE)
 	{
-		red = min(255.0, max(0.0, obj.sphere.rgb.red + lum));
-		green = min(255.0, max(0.0, obj.sphere.rgb.green + lum));
-		blue = min(255.0, max(0.0, obj.sphere.rgb.blue + lum));
+		red = min(255.0, red + (double)obj.sphere.rgb.red * light);
+		green = min(255.0, green + (double)obj.sphere.rgb.green * light);
+		blue = min(255.0, blue + (double)obj.sphere.rgb.blue * light);
 	}
 	else if (obj.type == PLANE)
 	{
-		red = min(255.0, max(0.0, obj.plane.rgb.red + lum));
-		green = min(255.0, max(0.0, obj.plane.rgb.green + lum));
-		blue = min(255.0, max(0.0, obj.plane.rgb.blue + lum));
+		red = min(255.0, red + (double)obj.plane.rgb.red * light);
+		green = min(255.0, green + (double)obj.plane.rgb.green * light);
+		blue = min(255.0, blue + (double)obj.plane.rgb.blue * light);
 	}
 	else if (obj.type == CYLINDER)
 	{
-		red = min(255.0, max(0.0, obj.cylinder.rgb.red + lum));
-		green = min(255.0, max(0.0, obj.cylinder.rgb.green + lum));
-		blue = min(255.0, max(0.0, obj.cylinder.rgb.blue + lum));
+		red = min(255.0, red + (double)obj.cylinder.rgb.red * light);
+		green = min(255.0, green + (double)obj.cylinder.rgb.green * light);
+		blue = min(255.0, blue + (double)obj.cylinder.rgb.blue * light);
 	}
+	return (create_color_struct((int)red, (int)green, (int)blue));
+}
+
+t_vector	get_normal(t_vector p_hit, t_obj obj)
+{
+	double		z;
+	t_vector	n_hit;
+
+	if (obj.type == SPHERE)
+		n_hit = unit_vec(vec_diff(p_hit, obj.sphere.coord));
+	else if (obj.type == PLANE)
+		n_hit = unit_vec(obj.plane.orient);
+	else if (obj.type == CYLINDER)
+	{
+		z = vec_dot(obj.cylinder.orient, vec_diff(p_hit, obj.cylinder.coord));
+		n_hit = unit_vec(vec_diff(p_hit, vec_add(obj.cylinder.coord, vec_scale(obj.cylinder.orient, z))));
+	}
+	return (n_hit);
+}
+
+int	is_in_shadow(t_vector p_hit, t_vector n_hit, t_params params)
+{
+	t_vector	dir_light;
+	t_obj		obj;
+	double		t;
+	double		dist;
+	double		shadow_bias;
+
+	shadow_bias = 1E-4;
+	dir_light = unit_vec(vec_diff(params.light->coord, p_hit));
+	p_hit = vec_add(p_hit, vec_scale(n_hit, shadow_bias));
+	dist = vec_length(vec_diff(params.light->coord, p_hit));
+	t = hit_object(ray_create(p_hit, dir_light), params.obj_set, &obj);
+	if (t > 0.0 && t < dist)
+		return (1);
+	return (0);
+}
+
+t_color	ambient_color(t_ambient ambient)
+{
+	double	red;
+	double	green;
+	double	blue;
+
+	red = (double)ambient.rgb.red * ambient.ambient_ratio;
+	green = (double)ambient.rgb.green * ambient.ambient_ratio;
+	blue = (double)ambient.rgb.blue * ambient.ambient_ratio;
 	return (create_color_struct((int)red, (int)green, (int)blue));
 }
 
@@ -272,13 +289,17 @@ t_color	ray_color(t_ray ray, t_params params)
 	double		t;
 	t_vector	p_hit;
 	t_vector	n_hit;
-	double			lum;
+	double		light;
 
-	t = hit_object(ray, params.obj_set, &obj, &p_hit, &n_hit, params);
+	t = hit_object(ray, params.obj_set, &obj);
+	p_hit = ray_at(ray, t);
+	n_hit = get_normal(p_hit, obj);
 	if (t < T_MAX)
 	{
-		lum = calculate_shadow(params, p_hit, n_hit);
-		return (get_color(obj, lum));
+		light = 0.0;
+		if (!is_in_shadow(p_hit, n_hit, params))
+			light = calculate_light(params, p_hit, n_hit);
+		return (get_color(obj, light, *params.ambient));
 	}
 	return (create_color_struct(0, 0, 0));
 }
