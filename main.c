@@ -171,14 +171,18 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 	return (t);
 }
 
-double	calculate_light(t_params param, t_vector p_hit, t_vector n_hit)
+t_vector	get_luminosity(t_params param, t_vector p_hit, t_vector n_hit)
 {
 	t_vector	dir_light;
 	double		intensity;
+	t_vector	color;
 
+	color.x = (double)param.light->rgb.red / 255.0;
+	color.y = (double)param.light->rgb.green / 255.0;
+	color.z = (double)param.light->rgb.blue / 255.0;
 	dir_light = vec_diff(param.light->coord, p_hit);
-	intensity = max(0.0, vec_dot(unit_vec(dir_light), n_hit));
-	return (param.light->bright_ratio * intensity);
+	intensity = 10000* max(0.0, vec_dot(unit_vec(dir_light), n_hit)) / vec_dot(dir_light, dir_light) * param.light->bright_ratio;
+	return (vec_scale(color, intensity));
 }
 
 
@@ -206,7 +210,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 	return (t);
 }
 
-t_color	get_color(t_obj obj, double light, t_ambient ambient)
+t_color	get_color(t_obj obj, t_vector light, t_ambient ambient)
 {
 	double	red;
 	double	green;
@@ -217,21 +221,21 @@ t_color	get_color(t_obj obj, double light, t_ambient ambient)
 	blue = (double)ambient.rgb.blue * ambient.ambient_ratio;
 	if (obj.type == SPHERE)
 	{
-		red = min(255.0, red + (double)obj.sphere.rgb.red * light);
-		green = min(255.0, green + (double)obj.sphere.rgb.green * light);
-		blue = min(255.0, blue + (double)obj.sphere.rgb.blue * light);
+		red = min(255.0, red + (double)obj.sphere.rgb.red * light.x);
+		green = min(255.0, green + (double)obj.sphere.rgb.green * light.y);
+		blue = min(255.0, blue + (double)obj.sphere.rgb.blue * light.z);
 	}
 	else if (obj.type == PLANE)
 	{
-		red = min(255.0, red + (double)obj.plane.rgb.red * light);
-		green = min(255.0, green + (double)obj.plane.rgb.green * light);
-		blue = min(255.0, blue + (double)obj.plane.rgb.blue * light);
+		red = min(255.0, red + (double)obj.plane.rgb.red * light.x);
+		green = min(255.0, green + (double)obj.plane.rgb.green * light.y);
+		blue = min(255.0, blue + (double)obj.plane.rgb.blue * light.z);
 	}
 	else if (obj.type == CYLINDER)
 	{
-		red = min(255.0, red + (double)obj.cylinder.rgb.red * light);
-		green = min(255.0, green + (double)obj.cylinder.rgb.green * light);
-		blue = min(255.0, blue + (double)obj.cylinder.rgb.blue * light);
+		red = min(255.0, red + (double)obj.cylinder.rgb.red * light.x);
+		green = min(255.0, green + (double)obj.cylinder.rgb.green * light.y);
+		blue = min(255.0, blue + (double)obj.cylinder.rgb.blue * light.z);
 	}
 	return (create_color_struct((int)red, (int)green, (int)blue));
 }
@@ -289,21 +293,30 @@ t_color	ray_color(t_ray ray, t_params params)
 	double		t;
 	t_vector	p_hit;
 	t_vector	n_hit;
-	double		light;
+	t_vector		light;
 
 	t = hit_object(ray, params.obj_set, &obj);
 	p_hit = ray_at(ray, t);
 	n_hit = get_normal(p_hit, obj);
 	if (t < T_MAX)
 	{
-		light = 0.0;
+		light = vec_create(0.0,0.0,0.0);
 		if (!is_in_shadow(p_hit, n_hit, params))
-			light = calculate_light(params, p_hit, n_hit);
+			light = get_luminosity(params, p_hit, n_hit);
 		return (get_color(obj, light, *params.ambient));
 	}
 	return (create_color_struct(0, 0, 0));
 }
-	
+
+int	close_window(int keycode, void *mlx)
+{
+	if (keycode == ESC)
+	{
+		mlx_loop_end(mlx);
+	}
+	exit(0);
+}
+
 int	main(int argc, char *argv[])
 {
 	void		*mlx;
@@ -352,6 +365,7 @@ int	main(int argc, char *argv[])
 		}
 	}
 	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+	mlx_hook(mlx_win, 2, 1L<<0, close_window, mlx);
 	mlx_loop(mlx);
 	return (0);
 }

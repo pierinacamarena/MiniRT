@@ -5,6 +5,7 @@
 #define WIDTH 1050
 #define HEIGTH ((double)WIDTH / RATIO)
 #define FOCAL_LEN 1.0
+# define ESC	65307
 
 typedef struct s_data {
 	void	*img;
