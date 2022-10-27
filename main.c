@@ -146,10 +146,10 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 	t_vector	intersect;
 
 	vup = vec_create(0, 1, 0);
-	right = unit_vec(vec_cross(cylinder.orient, vup));
+	right = unit_vec(vec_cross(unit_vec(cylinder.orient), vup));
 	if (vec_dot(vup, right) != 0)
-		right = unit_vec(vec_cross(cylinder.orient, vec_create(1, 0, 0)));
-	up = unit_vec(vec_cross(right, cylinder.orient));
+		right = unit_vec(vec_cross(unit_vec(cylinder.orient), vec_create(1, 0, 0)));
+	up = unit_vec(vec_cross(right, unit_vec(cylinder.orient)));
 	oc = vec_diff(ray.orig, cylinder.coord);
 	a = pow(vec_dot(ray.dir, up), 2) + pow(vec_dot(ray.dir, right), 2);
 	b = 2 * (vec_dot(right, oc) * vec_dot(right, ray.dir) + vec_dot(up, oc) * vec_dot(up, ray.dir));
@@ -159,12 +159,12 @@ double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 		return (-1.0);
 	t = (-1.0 * b - sqrt(discr)) / (2.0 * a);
 	intersect = ray_at(ray, t);
-	z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+	z = vec_dot(unit_vec(cylinder.orient), vec_diff(intersect, cylinder.coord));
 	if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0) || t < 0.0)
 	{
 		t = (-1.0 * b + sqrt(discr)) / (2.0 * a);
 		intersect = ray_at(ray, t);
-		z = vec_dot(cylinder.orient, vec_diff(intersect, cylinder.coord));
+		z = vec_dot(unit_vec(cylinder.orient), vec_diff(intersect, cylinder.coord));
 		if ((z > 0.0 && z > cylinder.height / 2.0) || (z < 0.0 && z < -1.0 * cylinder.height / 2.0))
 		return (-1.0);
 	}
@@ -240,7 +240,7 @@ t_color	get_color(t_obj obj, t_vector light, t_ambient ambient)
 	return (create_color_struct((int)red, (int)green, (int)blue));
 }
 
-t_vector	get_normal(t_vector p_hit, t_obj obj)
+t_vector	get_normal(t_vector p_hit, t_obj obj, t_params params)
 {
 	double		z;
 	t_vector	n_hit;
@@ -251,9 +251,11 @@ t_vector	get_normal(t_vector p_hit, t_obj obj)
 		n_hit = unit_vec(obj.plane.orient);
 	else if (obj.type == CYLINDER)
 	{
-		z = vec_dot(obj.cylinder.orient, vec_diff(p_hit, obj.cylinder.coord));
-		n_hit = unit_vec(vec_diff(p_hit, vec_add(obj.cylinder.coord, vec_scale(obj.cylinder.orient, z))));
+		z = vec_dot(unit_vec(obj.cylinder.orient), vec_diff(p_hit, obj.cylinder.coord));
+		n_hit = unit_vec(vec_diff(p_hit, vec_add(obj.cylinder.coord, vec_scale(unit_vec(obj.cylinder.orient), z))));
 	}
+	if (vec_dot(n_hit, unit_vec(vec_diff(p_hit, params.camera->coord))) > 0.0)
+		n_hit = vec_scale(n_hit, -1.0);
 	return (n_hit);
 }
 
@@ -275,18 +277,6 @@ int	is_in_shadow(t_vector p_hit, t_vector n_hit, t_params params)
 	return (0);
 }
 
-t_color	ambient_color(t_ambient ambient)
-{
-	double	red;
-	double	green;
-	double	blue;
-
-	red = (double)ambient.rgb.red * ambient.ambient_ratio;
-	green = (double)ambient.rgb.green * ambient.ambient_ratio;
-	blue = (double)ambient.rgb.blue * ambient.ambient_ratio;
-	return (create_color_struct((int)red, (int)green, (int)blue));
-}
-
 t_color	ray_color(t_ray ray, t_params params)
 {
 	t_obj		obj;
@@ -297,7 +287,7 @@ t_color	ray_color(t_ray ray, t_params params)
 
 	t = hit_object(ray, params.obj_set, &obj);
 	p_hit = ray_at(ray, t);
-	n_hit = get_normal(p_hit, obj);
+	n_hit = get_normal(p_hit, obj, params);
 	if (t < T_MAX)
 	{
 		light = vec_create(0.0,0.0,0.0);
