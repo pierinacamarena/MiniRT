@@ -9,7 +9,10 @@ OBJS	=	main.o\
 			lexer.o\
 			scanner.o\
 			free.o\
-			list.o
+			list.o\
+			ray_color.o\
+			utils.o\
+			hit.o
 
 HEADS	=	params.h\
 			vector.h\
@@ -20,7 +23,10 @@ HEADS	=	params.h\
 			lexer.h\
 			scanner.h\
 			free.h\
-			list.h
+			list.h\
+			ray_color.h\
+			utils.h\
+			hit.h
 
 CC		=	cc
 

@@ -21,14 +21,14 @@ t_color	color_add(t_color color1, t_color color2)
 	return (new_color);
 }
 
+int	create_color(int red, int green, int blue)
+{
+	return ((red << 16) | (green << 8) | blue);
+}
+
 int	rgb_to_color(t_color rgb)
 {
 	return ((rgb.red << 16) | (rgb.green << 8) | rgb.blue);
-}
-
-int	create_rgb(int red, int green, int blue)
-{
-	return ((red << 16) | (green << 8) | blue);
 }
 
 int	get_r(int color)
