@@ -20,5 +20,6 @@ void	free_params(t_params *params)
 void	clean_exit(int exit_code, t_params *params)
 {
 	free_params(params);
+	free(params->file_contents);
 	exit(exit_code);
 }

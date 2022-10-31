@@ -29,13 +29,13 @@ static int	get_int(t_token token, t_params *params)
 	int		n;
 	char	*s;
 
-	s = strndup(token.start, token.len);
+	s = ft_strndup(token.start, token.len);
 	if (s == NULL)
 	{
 		perror("malloc");
 		clean_exit(EXIT_FAILURE, params);
 	}
-	n = atoi(s);
+	n = ft_atoi(s);
 	free(s);
 	return (n);
 }
@@ -45,13 +45,13 @@ static double	get_float(t_token token, t_params *params)
 	double	n;
 	char	*s;
 
-	s = strndup(token.start, token.len);
+	s = ft_strndup(token.start, token.len);
 	if (s == NULL)
 	{
 		perror("malloc");
 		clean_exit(EXIT_FAILURE, params);
 	}
-	n = atof(s);
+	n = ft_atof(s);
 	free(s);
 	return (n);
 }
@@ -345,15 +345,46 @@ static void	get_object(t_params *params, t_parse_utils *utils)
 	}
 }
 
+void	print_param_error(int error)
+{
+	if ((error & MISSING_LIGHT) != 0)
+		printf("Point light missing.\n");
+	else if ((error & MISSING_CAM) != 0)
+		printf("Camera missing.\n");
+	else if ((error & MISSING_AMBIENT) != 0)
+		printf("Ambient light missing.\n");
+}
+
+void	check_params(t_params params)
+{
+	int	error;
+
+	error = 0;
+	if (params.light == NULL)
+		error |= MISSING_LIGHT;
+	else if (params.ambient == NULL)
+		error |= MISSING_AMBIENT;
+	else if (params.camera == NULL)
+		error |= MISSING_CAM;
+	if (error != 0)
+	{
+		printf("Error\n");
+		print_param_error(error);
+		clean_exit(EXIT_FAILURE, &params);
+	}
+}
+
 t_params	parse(char *s)
 {
 	t_params		params;
 	t_parse_utils	utils;
 
 	bzero(&params, sizeof(params));
+	params.file_contents = s;
 	utils.line = 1;
 	init_scanner(&utils.scanner, s);
 	utils.token = scan_token(&utils.scanner);
 	get_object(&params, &utils);
+	check_params(params);
 	return (params);
 }

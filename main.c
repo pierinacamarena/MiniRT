@@ -82,20 +82,36 @@ static t_vector	get_dir(double u, double v, t_camera camera)
 	return (unit_vec(dir));
 }
 
-int	close_window(int keycode, void *mlx)
+int	close_mlx(t_data *data)
+{
+	mlx_loop_end(data->mlx);
+	mlx_destroy_image(data->mlx, data->img);
+	mlx_destroy_window(data->mlx, data->mlx_win);
+	mlx_destroy_display(data->mlx);
+	free(data->mlx);
+	free_params(data->params);
+	exit(EXIT_SUCCESS);
+	return (0);
+}
+
+int	close_window(int keycode, t_data *data)
 {
 	if (keycode == ESC)
-	{
-		mlx_loop_end(mlx);
-	}
-	exit(0);
+		close_mlx(data);
+	return (0);
+}
+
+static void	init_data(t_data *data)
+{
+	data->mlx = mlx_init();
+	data->mlx_win = mlx_new_window(data->mlx, WIDTH, HEIGTH, "mini_rt");
+	data->img = mlx_new_image(data->mlx, WIDTH, HEIGTH);
+	data->addr = mlx_get_data_addr(data->img, &data->bits, &data->line, &data->endian);
 }
 
 int	main(int argc, char *argv[])
 {
-	void		*mlx;
-	void		*mlx_win;
-	t_data		img;
+	t_data		data;
 	t_params	params;
 	t_ray		ray;
 	char		*file_contents;
@@ -117,11 +133,9 @@ int	main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	params = parse(file_contents);
+	data.params = &params;
 	free(file_contents);
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, WIDTH, HEIGTH, "mini_rt");
-	img.img = mlx_new_image(mlx, WIDTH, HEIGTH);
-	img.addr = mlx_get_data_addr(img.img, &img.bits, &img.line, &img.endian);
+	init_data(&data);
 	theta = degree_to_radian(params.camera->fov);
 	view_width = 2.0 * tan(theta / 2.0) * FOCAL_LEN;
 	view_height = view_width / RATIO;	
@@ -132,11 +146,12 @@ int	main(int argc, char *argv[])
 			u = ((double)i / (WIDTH - 1.0) - 0.5) * view_width;
 			v = ((double)j / (HEIGTH - 1.0) - 0.5) * view_height;
 			ray = ray_create(params.camera->coord, get_dir(u, v, *params.camera));
-			put_pixel(&img, i, HEIGTH - j - 1, ray_color(ray, params));
+			put_pixel(&data, i, HEIGTH - j - 1, ray_color(ray, params));
 		}
 	}
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	mlx_hook(mlx_win, 2, 1L<<0, close_window, mlx);
-	mlx_loop(mlx);
+	mlx_put_image_to_window(data.mlx, data.mlx_win, data.img, 0, 0);
+	mlx_hook(data.mlx_win, 2, 1L<<0, close_window, &data);
+	mlx_hook(data.mlx_win, 17, 1L<<1, close_mlx, &data);
+	mlx_loop(data.mlx);
 	return (0);
 }

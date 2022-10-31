@@ -23,9 +23,12 @@ t_color	vec_to_color(t_vector vec)
 double	light_dot_normal(t_light light, t_vector p_hit, t_vector n_hit)
 {
 	t_vector	dir_light;
+	double		r2;
 
-	dir_light = unit_vec(vec_diff(light.coord, p_hit));
-	return (max(0.0, vec_dot(dir_light, n_hit)));
+	dir_light = vec_diff(light.coord, p_hit);
+	r2 = vec_dot(dir_light, dir_light);
+	dir_light = unit_vec(dir_light);
+	return (max(0.0, vec_dot(dir_light, n_hit)) / r2);
 }
 
 int	get_color(t_obj obj, t_ambient ambient, t_light light, double l_dot_n)

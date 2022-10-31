@@ -10,6 +10,7 @@
 #include "params.h"
 #include "free.h"
 #include "list.h"
+#include "utils.h"
 
 #define ID 256
 #define PARAM 257
