@@ -21,9 +21,9 @@
 #define EOF_TOKEN -1
 
 typedef struct s_token {
-	int		type;
-	char	*start;
-	int		len;
+	int			type;
+	const char	*start;
+	int			len;
 }	t_token;
 
 t_token	scan_token(t_scanner *scanner);

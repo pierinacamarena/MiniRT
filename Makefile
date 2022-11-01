@@ -12,7 +12,9 @@ OBJS	=	main.o\
 			list.o\
 			ray_color.o\
 			utils.o\
-			hit.o
+			hit.o\
+			init.o\
+			color_image.o
 
 HEADS	=	params.h\
 			vector.h\
@@ -26,7 +28,9 @@ HEADS	=	params.h\
 			list.h\
 			ray_color.h\
 			utils.h\
-			hit.h
+			hit.h\
+			init.h\
+			color_image.h
 
 CC		=	cc
 

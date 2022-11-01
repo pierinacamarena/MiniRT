@@ -65,7 +65,8 @@ typedef struct s_params {
 	t_camera	*camera;
 	t_light		*light;
 	t_obj		*obj_set;
-	char		*file_contents;
+	double		view_width;
+	double		view_height;
 }	t_params;	
 
 #endif

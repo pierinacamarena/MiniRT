@@ -1,6 +1,6 @@
 #include "scanner.h"
 
-void	init_scanner(t_scanner *scanner, char *s)
+void	init_scanner(t_scanner *scanner, const char *s)
 {
 	scanner->start = s;
 	scanner->current = s;

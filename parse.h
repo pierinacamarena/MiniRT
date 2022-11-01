@@ -21,6 +21,6 @@ typedef struct s_parse_utils {
 	int			line;
 }	t_parse_utils;
 
-t_params	parse(char *s);
+t_params	*parse(const char *s);
 
 #endif

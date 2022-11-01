@@ -33,7 +33,7 @@ static int	get_int(t_token token, t_params *params)
 	if (s == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	n = ft_atoi(s);
 	free(s);
@@ -49,7 +49,7 @@ static double	get_float(t_token token, t_params *params)
 	if (s == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	n = ft_atof(s);
 	free(s);
@@ -65,14 +65,14 @@ static t_token	match(int type, t_parse_utils *utils, t_params *params)
 		printf("Error\n");
 		printf("line %d: '%.*s' is not a valid token\n", \
 		utils->line, utils->token.len, utils->token.start);
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	else if ((type & utils->token.type) == 0)
 	{
 		printf("Error\n");
 		printf("line %d: unexpected token '%.*s'\n", \
 		utils->line, utils->token.len, utils->token.start);
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	prev = utils->token;
 	print_token(utils->token);
@@ -88,13 +88,13 @@ static void	get_ambient_light(t_params *params, t_parse_utils *utils)
 	{
 		printf("Error\n");
 		printf("line %d: ambient lightning set twice\n", utils->line);
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	params->ambient = (t_ambient *)malloc(sizeof(t_ambient));
 	if (params->ambient == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	prev = match(INT_TOKEN | FLOAT_TOKEN, utils, params);
 	params->ambient->ambient_ratio = get_float(prev, params);
@@ -116,13 +116,13 @@ static void	get_camera(t_params *params, t_parse_utils *utils)
 	{
 		printf("Error\n");
 		printf("line %d: camera set twice\n", utils->line);
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	params->camera = (t_camera *)malloc(sizeof(t_camera));
 	if (params->camera == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
 	params->camera->coord.x = get_float(prev, params);
@@ -152,13 +152,13 @@ static void	get_light(t_params *params, t_parse_utils *utils)
 	{
 		printf("Error\n");
 		printf("line %d\n: light set twice\n", utils->line);
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	params->light = (t_light *)malloc(sizeof(t_light));
 	if (params->light == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
 	params->light->coord.x = get_float(prev, params);
@@ -189,7 +189,7 @@ static void	get_sphere(t_params *params, t_parse_utils *utils)
 	if (obj == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = SPHERE;
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
@@ -223,7 +223,7 @@ static void	get_plane(t_params *params, t_parse_utils *utils)
 	if (obj == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = PLANE;
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
@@ -263,7 +263,7 @@ static void	get_cylinder(t_params *params, t_parse_utils *utils)
 	if (obj == NULL)
 	{
 		perror("malloc");
-		clean_exit(EXIT_FAILURE, params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = CYLINDER;
 	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
@@ -355,36 +355,40 @@ void	print_param_error(int error)
 		printf("Ambient light missing.\n");
 }
 
-void	check_params(t_params params)
+void	check_params(t_params *params)
 {
 	int	error;
 
 	error = 0;
-	if (params.light == NULL)
+	if (params->light == NULL)
 		error |= MISSING_LIGHT;
-	else if (params.ambient == NULL)
+	else if (params->ambient == NULL)
 		error |= MISSING_AMBIENT;
-	else if (params.camera == NULL)
+	else if (params->camera == NULL)
 		error |= MISSING_CAM;
 	if (error != 0)
 	{
 		printf("Error\n");
 		print_param_error(error);
-		clean_exit(EXIT_FAILURE, &params);
+		clean_params_exit(EXIT_FAILURE, params);
 	}
 }
 
-t_params	parse(char *s)
+//add handling of errors during parsing
+
+t_params	*parse(const char *s)
 {
-	t_params		params;
+	t_params		*params;
 	t_parse_utils	utils;
 
-	bzero(&params, sizeof(params));
-	params.file_contents = s;
+	params = (t_params *)malloc(sizeof(t_params));
+	if (params == NULL)
+		return (NULL);
+	bzero(params, sizeof(t_params)); //make custom
 	utils.line = 1;
 	init_scanner(&utils.scanner, s);
 	utils.token = scan_token(&utils.scanner);
-	get_object(&params, &utils);
+	get_object(params, &utils);
 	check_params(params);
 	return (params);
 }

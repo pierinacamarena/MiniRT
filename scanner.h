@@ -4,11 +4,11 @@
 #include <ctype.h>
 
 typedef struct s_scanner {
-	char	*start;
-	char	*current;
+	const char	*start;
+	const char	*current;
 }	t_scanner;
 
-void	init_scanner(t_scanner *scanner, char *s);
+void	init_scanner(t_scanner *scanner, const char *s);
 int		advance(t_scanner *scanner);
 int		peek(t_scanner scanner);
 int		len_scan(t_scanner scanner);
