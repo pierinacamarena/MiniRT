@@ -1,7 +1,19 @@
-#ifndef COLOR_H
-#define COLOR_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   color.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/02 14:47:35 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/02 14:47:53 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-typedef struct	s_color {
+#ifndef COLOR_H
+# define COLOR_H
+
+typedef struct s_color {
 	int	red;
 	int	green;
 	int	blue;

@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:03:22 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/02 14:16:13 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/02 14:46:15 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,10 @@ int	main(int argc, char *argv[])
 	if (data == NULL)
 		exit(EXIT_FAILURE);
 	color_image(data->params, data->img);
-	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, data->img->img, 0, 0);
-	mlx_hook(data->mlx->mlx_win, 2, 1L<<0, keypress, data);
-	mlx_hook(data->mlx->mlx_win, 17, 1L<<1, close_mlx, data);
+	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, \
+data->img->img, 0, 0);
+	mlx_hook(data->mlx->mlx_win, 2, 1L << 0, keypress, data);
+	mlx_hook(data->mlx->mlx_win, 17, 1L << 1, close_mlx, data);
 	mlx_loop(data->mlx->mlx);
 	return (0);
 }

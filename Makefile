@@ -9,6 +9,7 @@ OBJS	=	main.o\
 			lexer.o\
 			scanner.o\
 			free.o\
+			free2.o\
 			list.o\
 			ray_color.o\
 			utils.o\

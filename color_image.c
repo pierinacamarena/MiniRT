@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   color_image.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/02 14:48:27 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/02 14:49:18 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "color_image.h"
 
 static double	degree_to_radian(int degrees)
@@ -5,7 +17,13 @@ static double	degree_to_radian(int degrees)
 	return ((double)degrees / 360.0 * 2.0 * PI);
 }
 
-static t_vector	get_dir(double u, double v, t_camera camera) { t_vector	right; t_vector	up; t_vector	temp; t_vector	dir;
+static t_vector	get_dir(double u, double v, t_camera camera)
+{
+	t_vector	right;
+	t_vector	up;
+	t_vector	temp;
+	t_vector	dir;
+
 	temp = vec_create(0, 1, 0);
 	right = vec_cross(camera.orient, temp);
 	if (vec_dot(camera.orient, right) != 0)
@@ -64,6 +82,7 @@ t_img	*replace_image(t_img *old_img, t_data *data)
 	color_image(data->params, new_img);
 	mlx_destroy_image(data->mlx->mlx, old_img->img);
 	free(old_img);
-	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, new_img->img, 0, 0);
+	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, \
+new_img->img, 0, 0);
 	return (new_img);
 }

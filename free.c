@@ -1,34 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/02 14:50:17 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/02 14:51:55 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "free.h"
-
-static void	free_objs_set(t_obj *obj_set)
-{
-	if (obj_set != NULL)
-	{
-		free_objs_set(obj_set->next);
-		free(obj_set);
-	}
-}
-
-void	free_params(t_params *params)
-{
-	if (params == NULL)
-		return ;
-	free(params->ambient);
-	free(params->camera);
-	free(params->light);
-	free_objs_set(params->obj_set);
-	free(params);
-}
-
-void	free_file(t_file *file)
-{
-	if (file == NULL)
-		return ;
-	close(file->fd);
-	free(file->file_contents);
-	free(file);
-	file = NULL;
-}
 
 static void	free_img(t_img *img, t_mlx *mlx)
 {
@@ -38,7 +20,7 @@ static void	free_img(t_img *img, t_mlx *mlx)
 	free(img);
 	img = NULL;
 }
-	
+
 static void	free_mlx(t_mlx *mlx)
 {
 	if (mlx == NULL)
