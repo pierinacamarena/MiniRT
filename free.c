@@ -11,6 +11,8 @@ static void	free_objs_set(t_obj *obj_set)
 
 void	free_params(t_params *params)
 {
+	if (params == NULL)
+		return ;
 	free(params->ambient);
 	free(params->camera);
 	free(params->light);
@@ -20,16 +22,32 @@ void	free_params(t_params *params)
 
 void	free_file(t_file *file)
 {
+	if (file == NULL)
+		return ;
 	close(file->fd);
 	free(file->file_contents);
 	free(file);
+	file = NULL;
 }
 
+static void	free_img(t_img *img, t_mlx *mlx)
+{
+	if (img == NULL || mlx == NULL)
+		return ;
+	mlx_destroy_image(mlx->mlx, img->img);
+	free(img);
+	img = NULL;
+}
+	
 static void	free_mlx(t_mlx *mlx)
 {
+	if (mlx == NULL)
+		return ;
 	mlx_destroy_window(mlx->mlx, mlx->mlx_win);
 	mlx_destroy_display(mlx->mlx);
 	free(mlx->mlx);
+	free(mlx);
+	mlx = NULL;
 }
 
 void	clean_params_exit(int exit_code, t_params *params)
@@ -40,12 +58,11 @@ void	clean_params_exit(int exit_code, t_params *params)
 
 void	clean(t_data *data)
 {
-	if (data->params != NULL)
-		free_params(data->params);
-	if (data->file != NULL)
-		free_file(data->file);
-	if (data->img != NULL)
-		mlx_destroy_image(data->mlx->mlx, data->img->img);
-	if (data->mlx != NULL)
-		free_mlx(data->mlx);
+	if (data == NULL)
+		return ;
+	free_file(data->file);
+	free_params(data->params);
+	free_img(data->img, data->mlx);
+	free_mlx(data->mlx);
+	free(data);
 }

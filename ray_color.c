@@ -28,7 +28,7 @@ double	light_dot_normal(t_light light, t_vector p_hit, t_vector n_hit)
 	dir_light = vec_diff(light.coord, p_hit);
 	r2 = vec_dot(dir_light, dir_light);
 	dir_light = unit_vec(dir_light);
-	return (max(0.0, vec_dot(dir_light, n_hit)) / r2);
+	return (POWER * max(0.0, vec_dot(dir_light, n_hit)) / r2);
 }
 
 int	get_color(t_obj obj, t_ambient ambient, t_light light, double l_dot_n)
@@ -58,6 +58,7 @@ static t_vector	get_normal(t_vector p_hit, t_vector from, t_obj obj)
 	double		z;
 	t_vector	n_hit;
 
+	n_hit = vec_create(0.0, 0.0, 0.0);
 	if (obj.type == SPHERE)
 		n_hit = unit_vec(vec_diff(p_hit, obj.sphere.coord));
 	else if (obj.type == PLANE)

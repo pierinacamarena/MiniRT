@@ -69,7 +69,7 @@ t_data	*init_data(const char *filename)
 		return (NULL);
 	}
 	data->params = parse(data->file->file_contents);
-	if (data->file == NULL)
+	if (data->params == NULL)
 	{
 		clean(data);
 		return (NULL);

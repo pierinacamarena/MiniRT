@@ -12,13 +12,11 @@
 #include "list.h"
 #include "utils.h"
 
-#define ID 256
-#define PARAM 257
-
 typedef struct s_parse_utils {
 	t_token		token;
 	t_scanner	scanner;
 	int			line;
+	int			panic;
 }	t_parse_utils;
 
 t_params	*parse(const char *s);

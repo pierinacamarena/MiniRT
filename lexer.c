@@ -77,7 +77,6 @@ t_token	get_param_token(t_scanner *scanner)
 t_token	scan_token(t_scanner *scanner)
 {
 	skip_blanks(scanner);
-	//add handling of multiple buffers
 	if (peek(*scanner) == '\0')
 		return (make_token(EOF_TOKEN, *scanner));
 	else if (isalpha(peek(*scanner)))

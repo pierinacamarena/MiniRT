@@ -7,7 +7,7 @@
 #include "params.h"
 
 #define RATIO (16.0 / 9.0)
-#define WIDTH 1000
+#define WIDTH 50
 #define HEIGHT ((double)WIDTH / RATIO)
 #define FOCAL_LEN 1.0
 # define ESC	65307

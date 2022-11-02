@@ -1,6 +1,6 @@
 #include "parse.h"
 
-static void	print_token(t_token token)
+/*static void	print_token(t_token token)
 {
 	if (token.type == AMBIENT_TOKEN)
 		printf("AMBIENT_TOKEN\t'%.*s'\n", token.len, token.start);
@@ -22,7 +22,7 @@ static void	print_token(t_token token)
 		printf("COMMA_TOKEN\t'%.*s'\n", token.len, token.start);
 	else if (token.type == ERROR_TOKEN)
 		printf("ERROR_TOKEN\t'%.*s'\n", token.len, token.start);
-}
+}*/
 
 static int	get_int(t_token token, t_params *params)
 {
@@ -56,26 +56,28 @@ static double	get_float(t_token token, t_params *params)
 	return (n);
 }
 
-static t_token	match(int type, t_parse_utils *utils, t_params *params)
+static t_token	match(int type, t_parse_utils *utils)
 {
 	t_token	prev;
 
-	if (utils->token.type == ERROR_TOKEN)
+	if (utils->token.type == ERROR_TOKEN && utils->panic == 0)
 	{
 		printf("Error\n");
 		printf("line %d: '%.*s' is not a valid token\n", \
 		utils->line, utils->token.len, utils->token.start);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
-	else if ((type & utils->token.type) == 0)
+	else if ((type & utils->token.type) == 0 && utils->panic == 0)
 	{
 		printf("Error\n");
+		if (utils->token.type == NEWLINE_TOKEN)
+			printf("line %d: unexpected token 'newline'\n", utils->line);
 		printf("line %d: unexpected token '%.*s'\n", \
 		utils->line, utils->token.len, utils->token.start);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
 	prev = utils->token;
-	print_token(utils->token);
+	//print_token(utils->token);
 	utils->token = scan_token(&utils->scanner);
 	return (prev);
 }
@@ -84,27 +86,29 @@ static void	get_ambient_light(t_params *params, t_parse_utils *utils)
 {
 	t_token	prev;
 
-	if (params->ambient != NULL)
+	if (params->ambient != NULL && utils->panic == 0)
 	{
 		printf("Error\n");
 		printf("line %d: ambient lightning set twice\n", utils->line);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
+	if (utils->panic == 1)
+		return ;
 	params->ambient = (t_ambient *)malloc(sizeof(t_ambient));
 	if (params->ambient == NULL)
 	{
 		perror("malloc");
 		clean_params_exit(EXIT_FAILURE, params);
 	}
-	prev = match(INT_TOKEN | FLOAT_TOKEN, utils, params);
+	prev = match(INT_TOKEN | FLOAT_TOKEN, utils);
 	params->ambient->ambient_ratio = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	params->ambient->rgb.red = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	params->ambient->rgb.green = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	params->ambient->rgb.blue = get_int(prev, params);
 }
 
@@ -112,35 +116,37 @@ static void	get_camera(t_params *params, t_parse_utils *utils)
 {
 	t_token	prev;
 
-	if (params->camera != NULL)
+	if (params->camera != NULL && utils->panic == 0)
 	{
 		printf("Error\n");
 		printf("line %d: camera set twice\n", utils->line);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
+	if (utils->panic == 1)
+		return ;
 	params->camera = (t_camera *)malloc(sizeof(t_camera));
 	if (params->camera == NULL)
 	{
 		perror("malloc");
 		clean_params_exit(EXIT_FAILURE, params);
 	}
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->coord.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->coord.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->coord.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->orient.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->orient.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->camera->orient.z = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	params->camera->fov = get_int(prev, params);
 }
 
@@ -148,35 +154,37 @@ static void	get_light(t_params *params, t_parse_utils *utils)
 {
 	t_token	prev;
 
-	if (params->light != NULL)
+	if (params->light != NULL && utils->panic == 0)
 	{
 		printf("Error\n");
 		printf("line %d\n: light set twice\n", utils->line);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
+	if (utils->panic == 1)
+		return ;
 	params->light = (t_light *)malloc(sizeof(t_light));
 	if (params->light == NULL)
 	{
 		perror("malloc");
 		clean_params_exit(EXIT_FAILURE, params);
 	}
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->light->coord.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->light->coord.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->light->coord.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	params->light->bright_ratio = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	params->light->rgb.red = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	params->light->rgb.green = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	params->light->rgb.blue = get_int(prev, params);
 }
 
@@ -192,23 +200,23 @@ static void	get_sphere(t_params *params, t_parse_utils *utils)
 		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = SPHERE;
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->sphere.coord.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->sphere.coord.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->sphere.coord.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->sphere.diameter = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	obj->sphere.rgb.red = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->sphere.rgb.green = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->sphere.rgb.blue = get_int(prev, params);
 	obj->next = NULL;
 	params->obj_set = append_obj_set(params->obj_set, obj);
@@ -226,29 +234,29 @@ static void	get_plane(t_params *params, t_parse_utils *utils)
 		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = PLANE;
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.coord.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.coord.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.coord.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.orient.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.orient.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->plane.orient.z = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	obj->plane.rgb.red = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->plane.rgb.green = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->plane.rgb.blue = get_int(prev, params);
 	obj->next = NULL;
 	params->obj_set = append_obj_set(params->obj_set, obj);
@@ -266,33 +274,33 @@ static void	get_cylinder(t_params *params, t_parse_utils *utils)
 		clean_params_exit(EXIT_FAILURE, params);
 	}
 	obj->type = CYLINDER;
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.coord.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.coord.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.coord.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.orient.x = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.orient.y = get_float(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.orient.z = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.diameter = get_float(prev, params);
-	prev = match(FLOAT_TOKEN | INT_TOKEN, utils, params);
+	prev = match(FLOAT_TOKEN | INT_TOKEN, utils);
 	obj->cylinder.height = get_float(prev, params);
-	prev = match(INT_TOKEN, utils, params);
+	prev = match(INT_TOKEN, utils);
 	obj->cylinder.rgb.red = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->cylinder.rgb.green = get_int(prev, params);
-	match(COMMA_TOKEN, utils, params);
-	prev = match(INT_TOKEN, utils, params);
+	match(COMMA_TOKEN, utils);
+	prev = match(INT_TOKEN, utils);
 	obj->cylinder.rgb.blue = get_int(prev, params);
 	obj->next = NULL;
 	params->obj_set = append_obj_set(params->obj_set, obj);
@@ -302,47 +310,44 @@ static void	get_object(t_params *params, t_parse_utils *utils)
 {
 	if (utils->token.type == AMBIENT_TOKEN)
 	{
-		match(AMBIENT_TOKEN, utils, params);
+		match(AMBIENT_TOKEN, utils);
 		get_ambient_light(params, utils);
 	}
 	else if (utils->token.type == CAMERA_TOKEN)
 	{
-		match(CAMERA_TOKEN, utils, params);
+		match(CAMERA_TOKEN, utils);
 		get_camera(params, utils);
 	}
 	else if (utils->token.type == LIGHT_TOKEN)
 	{
-		match(LIGHT_TOKEN, utils, params);
+		match(LIGHT_TOKEN, utils);
 		get_light(params, utils);
 	}
 	else if (utils->token.type == SPHERE_TOKEN)
 	{
-		match(SPHERE_TOKEN, utils, params);
+		match(SPHERE_TOKEN, utils);
 		get_sphere(params, utils);
 	}
 	else if (utils->token.type == PLANE_TOKEN)
 	{
-		match(PLANE_TOKEN, utils, params);
+		match(PLANE_TOKEN, utils);
 		get_plane(params, utils);
 	}
 	else if (utils->token.type == CYLINDER_TOKEN)
 	{
-		match(CYLINDER_TOKEN, utils, params);
+		match(CYLINDER_TOKEN, utils);
 		get_cylinder(params, utils);
 	}
 	else if (utils->token.type == NEWLINE_TOKEN)
 	{
-		match(NEWLINE_TOKEN, utils, params);
+		match(NEWLINE_TOKEN, utils);
 		utils->line++;
 		get_object(params, utils);
 	}
 	else
-		match(ERROR_TOKEN, utils, params);
+		match(ERROR_TOKEN, utils);
 	if (utils->token.type != EOF_TOKEN)
-	{
-		printf("\n");
 		get_object(params, utils);
-	}
 }
 
 void	print_param_error(int error)
@@ -355,7 +360,7 @@ void	print_param_error(int error)
 		printf("Ambient light missing.\n");
 }
 
-void	check_params(t_params *params)
+void	check_params(t_params *params, t_parse_utils *utils)
 {
 	int	error;
 
@@ -370,11 +375,9 @@ void	check_params(t_params *params)
 	{
 		printf("Error\n");
 		print_param_error(error);
-		clean_params_exit(EXIT_FAILURE, params);
+		utils->panic = 1;
 	}
 }
-
-//add handling of errors during parsing
 
 t_params	*parse(const char *s)
 {
@@ -388,7 +391,13 @@ t_params	*parse(const char *s)
 	utils.line = 1;
 	init_scanner(&utils.scanner, s);
 	utils.token = scan_token(&utils.scanner);
+	utils.panic = 0;
 	get_object(params, &utils);
-	check_params(params);
+	check_params(params, &utils);
+	if (utils.panic == 1)
+	{
+		free_params(params);
+		return (NULL);
+	}
 	return (params);
 }

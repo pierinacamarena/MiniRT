@@ -26,7 +26,7 @@ and must end in .rt\n");
 
 int	close_mlx(t_data *data)
 {
-	mlx_loop_end(data->mlx);
+	mlx_loop_end(data->mlx->mlx);
 	clean(data);
 	exit(EXIT_SUCCESS);
 	return (0);
@@ -47,23 +47,14 @@ int	keypress(int keycode, void *arg)
 		free_file(data->file);
 		data->file = init_file(filename);
 		if (data->file == NULL)
-		{
-			clean(data);
-			exit(EXIT_FAILURE);
-		}
+			close_mlx(data);
 		free_params(data->params);
 		data->params = parse(data->file->file_contents);
 		if (data->params == NULL)
-		{
-			clean(data);
-			exit(EXIT_FAILURE);
-		}
+			close_mlx(data);
 		img = get_new_image(data->mlx);
 		if (img == NULL)
-		{
-			clean(data);
-			exit(EXIT_FAILURE);
-		}
+			close_mlx(data);
 		color_image(data->params, img);
 		mlx_destroy_image(data->mlx->mlx, data->img->img);
 		data->img = img;
@@ -91,6 +82,8 @@ int	main(int argc, char *argv[])
 	}
 	check_filename(argv[1]);
 	data = init_data(argv[1]);
+	if (data == NULL)
+		exit(EXIT_FAILURE);
 	color_image(data->params, data->img);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, data->img->img, 0, 0);
 	mlx_hook(data->mlx->mlx_win, 2, 1L<<0, keypress, data);
