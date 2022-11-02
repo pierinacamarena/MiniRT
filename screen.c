@@ -39,7 +39,10 @@ t_img	*get_new_image(const t_mlx *mlx)
 
 	img = (t_img *)malloc(sizeof(t_img));
 	if (img == NULL)
+	{
+		perror("malloc");
 		return (NULL);
+	}
 	img->img = mlx_new_image(mlx->mlx, WIDTH, HEIGHT);
 	if (img->img == NULL)
 	{

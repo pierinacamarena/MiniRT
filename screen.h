@@ -42,5 +42,6 @@ typedef struct s_data {
 void	put_pixel(t_img *img, int x, int y, int color);
 t_mlx	*start_mlx(void);
 t_img	*get_new_image(const t_mlx *mlx);
+t_img	*replace_image(t_img *old_image, t_data *data);
 
 #endif

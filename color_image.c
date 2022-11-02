@@ -53,3 +53,17 @@ void	color_image(t_params *params, t_img *img)
 		x++;
 	}
 }
+
+t_img	*replace_image(t_img *old_img, t_data *data)
+{
+	t_img	*new_img;
+
+	new_img = get_new_image(data->mlx);
+	if (new_img == NULL)
+		return (NULL);
+	color_image(data->params, new_img);
+	mlx_destroy_image(data->mlx->mlx, old_img->img);
+	free(old_img);
+	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, new_img->img, 0, 0);
+	return (new_img);
+}

@@ -7,5 +7,6 @@
 #include "ray_color.h"
 
 void	color_image(t_params *params, t_img *img);
+t_img	*replace_image(t_img *old_img, t_data *data);
 
 #endif

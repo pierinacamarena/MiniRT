@@ -77,7 +77,6 @@ static t_token	match(int type, t_parse_utils *utils)
 		utils->panic = 1;
 	}
 	prev = utils->token;
-	//print_token(utils->token);
 	utils->token = scan_token(&utils->scanner);
 	return (prev);
 }

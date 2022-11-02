@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/02 14:03:22 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/02 14:16:13 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <mlx.h>
 
 #include "screen.h"
@@ -13,7 +25,8 @@ void	check_filename(char *filename)
 		filename++;
 	if (*filename == '.')
 		filename++;
-	if (*filename == 'r') filename++;
+	if (*filename == 'r')
+		filename++;
 	if (*filename == 't')
 		filename++;
 	if (*filename != '\0')
@@ -36,7 +49,6 @@ int	keypress(int keycode, void *arg)
 {
 	t_data		*data;
 	const char	*filename;
-	t_img		*img;
 
 	data = (t_data *)arg;
 	if (keycode == ESC)
@@ -45,31 +57,19 @@ int	keypress(int keycode, void *arg)
 	{
 		filename = data->file->filename;
 		free_file(data->file);
+		free_params(data->params);
 		data->file = init_file(filename);
 		if (data->file == NULL)
 			close_mlx(data);
-		free_params(data->params);
 		data->params = parse(data->file->file_contents);
 		if (data->params == NULL)
 			close_mlx(data);
-		img = get_new_image(data->mlx);
-		if (img == NULL)
+		data->img = replace_image(data->img, data);
+		if (data->img == NULL)
 			close_mlx(data);
-		color_image(data->params, img);
-		mlx_destroy_image(data->mlx->mlx, data->img->img);
-		data->img = img;
-		mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, data->img->img, 0, 0);
 	}
 	return (0);
 }
-
-/*	1) get the file contents
-	2) parse the file contents
-	3) start the mlx
-	4) create an image
-	5) color the image
-	6) put the image on the screen
-*/
 
 int	main(int argc, char *argv[])
 {
