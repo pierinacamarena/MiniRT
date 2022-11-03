@@ -20,15 +20,34 @@ t_color	vec_to_color(t_vector vec)
 	return (color);
 }
 
+double	calc_specular(t_vector dir_light, t_vector n_hit, t_vector p_hit)
+{
+	double		dot_prod;
+	double		specular;
+	t_vector	reflection;
+	t_vector	cam_view;
+
+	dot_prod = 2 * vec_dot(n_hit, dir_light);
+	reflection = vec_scale(n_hit, dot_prod);
+	reflection = vec_diff(reflection, dir_light);
+	cam_view = vec_scale(p_hit, -1.0);
+	specular = vec_dot(cam_view, reflection);
+	specular = pow(specular, SHININESS);
+	return (specular);
+}
+
 double	light_dot_normal(t_light light, t_vector p_hit, t_vector n_hit)
 {
 	t_vector	dir_light;
+	double		specular;
 	double		r2;
 
 	dir_light = vec_diff(light.coord, p_hit);
 	r2 = vec_dot(dir_light, dir_light);
 	dir_light = unit_vec(dir_light);
-	return (POWER * max(0.0, vec_dot(dir_light, n_hit)) / r2);
+	specular = calc_specular(dir_light, n_hit, p_hit);
+
+	return (POWER * max(0.0, vec_dot(dir_light, n_hit)) / r2 * specular);
 }
 
 int	get_color(t_obj obj, t_ambient ambient, t_light light, double l_dot_n)
