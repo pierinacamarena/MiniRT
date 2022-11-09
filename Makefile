@@ -2,6 +2,7 @@ NAME	=	mini_rt
 
 OBJS	=	main.o\
 			vector.o\
+			vector_utils.o\
 			ray.o\
 			color.o\
 			screen.o\
@@ -14,12 +15,14 @@ OBJS	=	main.o\
 			ray_color.o\
 			utils.o\
 			hit.o\
+			hit_utils.o\
 			init.o\
 			color_image.o\
 			init_obj1.o\
 			init_obj2.o\
 			parse_utils.o\
-			init_obj_utils.o
+			init_obj_utils.o\
+			light.o
 
 HEADS	=	params.h\
 			vector.h\
