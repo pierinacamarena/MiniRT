@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   hit.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:40:59 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:41:23 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HIT_H
-#define HIT_H
+# define HIT_H
 
-#include "ray.h"
-#include "params.h"
-
+# include "ray.h"
+# include "params.h"
 
 typedef struct s_vars {
 	t_vector	oc;

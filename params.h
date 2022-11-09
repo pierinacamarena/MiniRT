@@ -1,17 +1,29 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   params.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:45:36 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:46:01 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "color.h"
-#include "vector.h"
+#ifndef PARAMS_H
+# define PARAMS_H
 
-#define MISSING_LIGHT 0x1
-#define MISSING_CAM 0x2
-#define MISSING_AMBIENT 0x4
-#define SPHERE 0x1
-#define CYLINDER 0x2
-#define PLANE 0x4
-#define T_MAX 10000000
-#define PI 3.14159265358979
+# include "color.h"
+# include "vector.h"
+
+# define MISSING_LIGHT 0x1
+# define MISSING_CAM 0x2
+# define MISSING_AMBIENT 0x4
+# define SPHERE 0x1
+# define CYLINDER 0x2
+# define PLANE 0x4
+# define T_MAX 10000000
+# define PI 3.14159265358979
 
 typedef struct s_ambient {
 	double	ambient_ratio;

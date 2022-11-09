@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:48:27 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/02 14:49:18 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/09 17:57:22 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ static void	color_pixel(t_params *params, t_img *img, int x, int y)
 	t_ray	ray;
 	double	u;
 	double	v;
+	double	height;
 
+	height = WIDTH / RATIO;
 	u = ((double)x / (WIDTH - 1.0) - 0.5) * params->view_width;
-	v = ((double)y / (HEIGHT - 1.0) - 0.5) * params->view_height;
+	v = ((double)y / (height - 1.0) - 0.5) * params->view_height;
 	ray = ray_create(params->camera->coord, get_dir(u, v, *params->camera));
-	put_pixel(img, x, HEIGHT - y - 1, ray_color(ray, *params));
+	put_pixel(img, x, height - y - 1, ray_color(ray, *params));
 }
 
 void	color_image(t_params *params, t_img *img)
@@ -55,7 +57,9 @@ void	color_image(t_params *params, t_img *img)
 	double	theta;
 	int		x;
 	int		y;
+	double	height;
 
+	height = WIDTH / RATIO;
 	theta = degree_to_radian(params->camera->fov);
 	params->view_width = 2.0 * tan(theta / 2.0) * FOCAL_LEN;
 	params->view_height = params->view_width / RATIO;
@@ -63,7 +67,7 @@ void	color_image(t_params *params, t_img *img)
 	while (x < WIDTH)
 	{
 		y = 0;
-		while (y < HEIGHT)
+		while (y < height)
 		{
 			color_pixel(params, img, x, y);
 			y++;

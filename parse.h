@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:46:17 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:46:28 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSE_H
-#define PARSE_H
+# define PARSE_H
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
+# include <ctype.h>
+# include <stdio.h>
+# include <stdlib.h>
 
-#include "scanner.h"
-#include "lexer.h"
-#include "params.h"
-#include "free.h"
-#include "list.h"
-#include "utils.h"
+# include "scanner.h"
+# include "lexer.h"
+# include "params.h"
+# include "free.h"
+# include "list.h"
+# include "utils.h"
 
 typedef struct s_parse_utils {
 	t_token		token;
