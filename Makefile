@@ -15,7 +15,11 @@ OBJS	=	main.o\
 			utils.o\
 			hit.o\
 			init.o\
-			color_image.o
+			color_image.o\
+			init_obj1.o\
+			init_obj2.o\
+			parse_utils.o\
+			init_obj_utils.o
 
 HEADS	=	params.h\
 			vector.h\
