@@ -6,6 +6,7 @@
 #include "ray.h"
 #include "utils.h"
 #include "hit.h"
+#include "light.h"
 
 #define POWER 100000.0
 #define SHININESS 64.0
