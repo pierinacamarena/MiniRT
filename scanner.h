@@ -1,7 +1,19 @@
-#ifndef SCANNER_H
-#define SCANNER_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   scanner.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:47:14 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:47:18 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <ctype.h>
+#ifndef SCANNER_H
+# define SCANNER_H
+
+# include <ctype.h>
 
 typedef struct s_scanner {
 	const char	*start;

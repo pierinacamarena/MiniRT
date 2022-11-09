@@ -14,6 +14,8 @@ OBJS	=	main.o\
 			list.o\
 			ray_color.o\
 			utils.o\
+			utils2.o\
+			utils3.o\
 			hit.o\
 			hit_utils.o\
 			init.o\

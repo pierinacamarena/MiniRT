@@ -1,8 +1,20 @@
-#ifndef UTILS_H
-#define UTILS_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:57:49 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:57:54 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stddef.h>
-#include <stdlib.h>
+#ifndef UTILS_H
+# define UTILS_H
+
+# include <stddef.h>
+# include <stdlib.h>
 
 double	min(double a, double b);
 double	max(double a, double b);

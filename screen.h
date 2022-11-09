@@ -1,17 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   screen.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:47:27 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:55:00 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SCREEN_H
-#define SCREEN_H
+# define SCREEN_H
 
-#include <mlx.h>
-#include <stdlib.h>
+# include <mlx.h>
+# include <stdlib.h>
 
-#include "params.h"
+# include "params.h"
 
-#define RATIO (16.0 / 9.0)
-#define WIDTH 1050
-#define HEIGHT ((double)WIDTH / RATIO)
-#define FOCAL_LEN 1.0
+# define RATIO 1.7777777
+# define WIDTH 1050
+# define FOCAL_LEN 1.0
 # define ESC	65307
-#define ENTER 65293
+# define ENTER 65293
 
 typedef struct s_mlx {
 	void	*mlx;

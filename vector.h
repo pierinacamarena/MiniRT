@@ -1,8 +1,20 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vector.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 17:58:15 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 17:58:25 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdio.h>
-#include <math.h>
+#ifndef VECTOR_H
+# define VECTOR_H
+
+# include <stdio.h>
+# include <math.h>
 
 typedef struct s_vector {
 	double	x;
@@ -10,7 +22,6 @@ typedef struct s_vector {
 	double	z;
 }	t_vector;
 
-//put this struct somewhere else
 typedef struct s_vector_set {
 	t_vector	origin;
 	t_vector	horizon;
@@ -27,6 +38,6 @@ double			vec_dot(t_vector v, t_vector w);
 double			vec_length(t_vector v);
 t_vector		unit_vec(t_vector v);
 
-void		vec_print(t_vector v);
+void			vec_print(t_vector v);
 
 #endif
