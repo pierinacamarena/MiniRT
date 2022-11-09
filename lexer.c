@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 11:12:05 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 11:17:04 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lexer.h"
 
 static t_token	make_token(int type, t_scanner scanner)
@@ -8,6 +20,24 @@ static t_token	make_token(int type, t_scanner scanner)
 	token.start = scanner.start;
 	token.len = scanner.current - scanner.start;
 	return (token);
+}
+
+static inline int	get_type(char *lexeme)
+{	
+	if (strcmp("A", lexeme) == 0)
+		return (AMBIENT_TOKEN);
+	else if (strcmp("C", lexeme) == 0)
+		return (CAMERA_TOKEN);
+	else if (strcmp("L", lexeme) == 0)
+		return (LIGHT_TOKEN);
+	else if (strcmp("sp", lexeme) == 0)
+		return (SPHERE_TOKEN);
+	else if (strcmp("pl", lexeme) == 0)
+		return (PLANE_TOKEN);
+	else if (strcmp("cy", lexeme) == 0)
+		return (CYLINDER_TOKEN);
+	else
+		return (ERROR_TOKEN);
 }
 
 t_token	get_id_token(t_scanner *scanner)
@@ -23,20 +53,7 @@ t_token	get_id_token(t_scanner *scanner)
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	if (strcmp("A", lexeme) == 0)
-		type = AMBIENT_TOKEN;
-	else if (strcmp("C", lexeme) == 0)
-		type = CAMERA_TOKEN;
-	else if (strcmp("L", lexeme) == 0)
-		type = LIGHT_TOKEN;
-	else if (strcmp("sp", lexeme) == 0)
-		type = SPHERE_TOKEN;
-	else if (strcmp("pl", lexeme) == 0)
-		type = PLANE_TOKEN;
-	else if (strcmp("cy", lexeme) == 0)
-		type = CYLINDER_TOKEN;
-	else
-		type = ERROR_TOKEN;
+	type = get_type(lexeme);
 	free(lexeme);
 	return (make_token(type, *scanner));
 }
@@ -68,11 +85,6 @@ t_token	get_param_token(t_scanner *scanner)
 	scanner->current--;
 	return (make_token(type, *scanner));
 }
-
-/*
-	scans the next token in input
-	tokens are sequences of characters separated by spaces
-*/
 
 t_token	scan_token(t_scanner *scanner)
 {

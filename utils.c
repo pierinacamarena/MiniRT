@@ -159,3 +159,14 @@ char	*ft_realloc(char *ptr, size_t size)
 	free(ptr);
 	return (res);
 }
+
+void	ft_bzero(void *s, size_t n)
+{
+	char	*ptr;
+	size_t	i;
+
+	ptr = (char *)s;
+	i = 0;
+	while (i++ < n)
+		*ptr++ = '\0';
+}

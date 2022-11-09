@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/09 10:56:57 by rbourdil          #+#    #+#             */
+/*   Updated: 2022/11/09 11:10:29 by rbourdil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "init.h"
 
 static char	*read_file(int fd)
@@ -61,30 +73,18 @@ t_data	*init_data(const char *filename)
 	data = (t_data *)malloc(sizeof(t_data));
 	if (data == NULL)
 		return (NULL);
-	bzero(data, sizeof(t_data)); //implement custom
+	ft_bzero(data, sizeof(t_data));
 	data->file = init_file(filename);
 	if (data->file == NULL)
-	{
-		clean(data);
-		return (NULL);
-	}
+		clean_data_exit(EXIT_FAILURE, data);
 	data->params = parse(data->file->file_contents);
 	if (data->params == NULL)
-	{
-		clean(data);
-		return (NULL);
-	}
+		clean_data_exit(EXIT_FAILURE, data);
 	data->mlx = start_mlx();
 	if (data->mlx == NULL)
-	{
-		clean(data);
-		return (NULL);
-	}
+		clean_data_exit(EXIT_FAILURE, data);
 	data->img = get_new_image(data->mlx);
 	if (data->img == NULL)
-	{
-		clean(data);
-		return (NULL);
-	}
+		clean_data_exit(EXIT_FAILURE, data);
 	return (data);
 }
