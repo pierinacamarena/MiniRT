@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:50:17 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/02 14:51:55 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/09 11:08:52 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,10 @@ void	clean(t_data *data)
 	free_img(data->img, data->mlx);
 	free_mlx(data->mlx);
 	free(data);
+}
+
+void	clean_data_exit(int exit_code, t_data *data)
+{
+	clean(data);
+	exit(exit_code);
 }

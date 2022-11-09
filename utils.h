@@ -14,5 +14,6 @@ int		ft_atoi(char *s);
 double	ft_atof(char *s);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strjoin(char *s1, const char *s2);
+void	ft_bzero(void *s, size_t n);
 
 #endif
