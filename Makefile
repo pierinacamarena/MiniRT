@@ -37,14 +37,19 @@ HEADS	=	params.h\
 			init.h\
 			color_image.h
 
+MLX		=	mlx_linux
+
 CC		=	cc
 
 CFLAGS	=	-Wall -Wextra -Werror
 
-all:		$(NAME)
+all:		$(MLX) $(NAME)
 
 $(NAME):	$(OBJS)
 			$(CC) $(OBJS) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
+
+$(MLX):
+			make -C $(MLX)
 
 $(OBJS):	%.o:%.c $(HEADS)
 			$(CC) $(CFLAGS) -I/usr/include -Imlx_linux -c $< -o $@
@@ -57,4 +62,4 @@ fclean:		clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re
+.PHONY:		all clean fclean re $(MLX)
