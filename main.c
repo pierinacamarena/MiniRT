@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:03:22 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 11:07:54 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/09 16:35:05 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 void	check_filename(char *filename)
 {
-	while (ft_isalnum(*filename) || *filename == '_')
+	while (ft_isalnum(*filename) || *filename == '_' || *filename == '/')
 		filename++;
 	if (*filename == '.')
 		filename++;

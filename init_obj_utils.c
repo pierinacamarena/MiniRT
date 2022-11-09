@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 12:50:36 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 12:51:13 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/09 16:13:22 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void	get_surf_rgb(t_obj *obj, t_params *params, t_parse_utils *utils)
 	else if (obj->type == PLANE)
 		obj->plane.rgb.green = get_int(prev, params);
 	else if (obj->type == CYLINDER)
-		obj->cylinder.rgb.blue = get_int(prev, params);
+		obj->cylinder.rgb.green = get_int(prev, params);
 	match(COMMA_TOKEN, utils);
 	prev = match(INT_TOKEN, utils);
 	if (obj->type == SPHERE)
