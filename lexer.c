@@ -75,6 +75,8 @@ t_token	get_param_token(t_scanner *scanner)
 	{
 		type = FLOAT_TOKEN;
 		c = advance(scanner);
+		if (!ft_isdigit(c))
+			return (make_token(ERROR_TOKEN, *scanner));
 	}
 	while (ft_isdigit(c))
 		c = advance(scanner);
