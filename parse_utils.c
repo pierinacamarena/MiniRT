@@ -12,30 +12,6 @@
 
 #include "parse.h"
 
-/*static void	print_token(t_token token)
-{
-	if (token.type == AMBIENT_TOKEN)
-		printf("AMBIENT_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == CAMERA_TOKEN)
-		printf("CAMERA_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == LIGHT_TOKEN)
-		printf("LIGHT_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == SPHERE_TOKEN)
-		printf("SPHERE_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == PLANE_TOKEN)
-		printf("PLANE_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == CYLINDER_TOKEN)
-		printf("CYLINDER_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == FLOAT_TOKEN)
-		printf("FLOAT_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == INT_TOKEN)
-		printf("INT_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == COMMA_TOKEN)
-		printf("COMMA_TOKEN\t'%.*s'\n", token.len, token.start);
-	else if (token.type == ERROR_TOKEN)
-		printf("ERROR_TOKEN\t'%.*s'\n", token.len, token.start);
-}*/
-
 int	get_int(t_token token, t_params *params)
 {
 	int		n;
@@ -74,9 +50,12 @@ t_token	match(int type, t_parse_utils *utils)
 
 	if (utils->token.type == ERROR_TOKEN && utils->panic == 0)
 	{
-		printf("Error\n");
-		printf("line %d: '%.*s' is not a valid token\n", \
-		utils->line, utils->token.len, utils->token.start);
+		print_token_error("is not a valid token", utils->line, utils->token);
+		utils->panic = 1;
+	}
+	else if (utils->token.type == ERROR_LEN_TOKEN && utils->panic == 0)
+	{
+		print_token_error("is too long", utils->line, utils->token);
 		utils->panic = 1;
 	}
 	else if ((type & utils->token.type) == 0 && utils->panic == 0)

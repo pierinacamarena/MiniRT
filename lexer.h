@@ -18,6 +18,7 @@
 # include <stdlib.h>
 
 # include "scanner.h"
+# include "utils.h"
 
 # define AMBIENT_TOKEN 0x1
 # define CAMERA_TOKEN 0x2
@@ -29,8 +30,10 @@
 # define FLOAT_TOKEN 0x80
 # define COMMA_TOKEN 0x100
 # define NEWLINE_TOKEN 0x200
+# define ERROR_LEN_TOKEN -3
 # define ERROR_TOKEN -2
 # define EOF_TOKEN -1
+# define MAX_LEXEME_LEN 8
 
 typedef struct s_token {
 	int			type;

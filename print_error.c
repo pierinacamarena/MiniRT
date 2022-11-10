@@ -25,3 +25,10 @@ void	print_param_error(int error)
 	if ((error & MISSING_AMBIENT) != 0)
 		printf("Missing ambient\n");
 }
+
+void	print_token_error(const char *err_msg, int line, t_token token)
+{
+	printf("Error\n");
+	printf("line %d: '%.*s' %s\n", \
+	line, token.len, token.start, err_msg);
+}

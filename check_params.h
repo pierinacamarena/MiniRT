@@ -4,6 +4,7 @@
 # include "vector.h"
 # include "params.h"
 # include "color.h"
+# include "lexer.h"
 
 # define U_LIMIT 1000000.0
 # define L_LIMIT -1000000.0
@@ -26,5 +27,6 @@ int		check_rgb_limit(t_color rgb);
 int		check_obj_set(t_obj *obj_set);
 int		check_params(t_params *params);
 void	print_param_error(int error);
+void	print_token_error(const char *err_msg, int line, t_token token);
 
 #endif
