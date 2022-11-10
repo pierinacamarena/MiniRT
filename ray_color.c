@@ -32,19 +32,19 @@ t_color	vec_to_color(t_vector vec)
 	return (color);
 }
 
-int	get_color(t_obj obj, t_ambient ambient, t_light light, double l_dot_n)
+int	get_color(t_obj *obj, t_ambient ambient, t_light light, double l_dot_n)
 {
 	t_color	base_rgb;
 	double	red;
 	double	green;
 	double	blue;
 
-	if (obj.type == SPHERE)
-		base_rgb = obj.sphere.rgb;
-	else if (obj.type == PLANE)
-		base_rgb = obj.plane.rgb;
-	else if (obj.type == CYLINDER)
-		base_rgb = obj.cylinder.rgb;
+	if (obj->type == SPHERE)
+		base_rgb = obj->sphere.rgb;
+	else if (obj->type == PLANE)
+		base_rgb = obj->plane.rgb;
+	else if (obj->type == CYLINDER)
+		base_rgb = obj->cylinder.rgb;
 	red = (double)base_rgb.red * (ambient.ambient_ratio * \
 	(double)ambient.rgb.red / 255.0 + light.bright_ratio * \
 	l_dot_n * (double)light.rgb.red / 255.0);
@@ -60,22 +60,24 @@ int	get_color(t_obj obj, t_ambient ambient, t_light light, double l_dot_n)
 	return (create_color((int)red, (int)green, (int)blue));
 }
 
-static t_vector	get_normal(t_vector p_hit, t_vector from, t_obj obj)
+static t_vector	get_normal(t_vector p_hit, t_vector from, t_obj *obj)
 {
 	double		z;
 	t_vector	n_hit;
 
 	n_hit = vec_create(0.0, 0.0, 0.0);
-	if (obj.type == SPHERE)
-		n_hit = unit_vec(vec_diff(p_hit, obj.sphere.coord));
-	else if (obj.type == PLANE)
-		n_hit = unit_vec(obj.plane.orient);
-	else if (obj.type == CYLINDER)
+	if (obj == NULL)
+		return (n_hit);
+	if (obj->type == SPHERE)
+		n_hit = unit_vec(vec_diff(p_hit, obj->sphere.coord));
+	else if (obj->type == PLANE)
+		n_hit = unit_vec(obj->plane.orient);
+	else if (obj->type == CYLINDER)
 	{
-		z = vec_dot(unit_vec(obj.cylinder.orient), \
-		vec_diff(p_hit, obj.cylinder.coord));
-		n_hit = unit_vec(vec_diff(p_hit, vec_add(obj.cylinder.coord, \
-		vec_scale(unit_vec(obj.cylinder.orient), z))));
+		z = vec_dot(unit_vec(obj->cylinder.orient), \
+		vec_diff(p_hit, obj->cylinder.coord));
+		n_hit = unit_vec(vec_diff(p_hit, vec_add(obj->cylinder.coord, \
+		vec_scale(unit_vec(obj->cylinder.orient), z))));
 	}
 	if (vec_dot(n_hit, unit_vec(vec_diff(p_hit, from))) > 0.0)
 		n_hit = vec_scale(n_hit, -1.0);
@@ -84,12 +86,13 @@ static t_vector	get_normal(t_vector p_hit, t_vector from, t_obj obj)
 
 int	ray_color(t_ray ray, t_params params)
 {
-	t_obj		obj;
+	t_obj		*obj;
 	double		t;
 	t_vector	p_hit;
 	t_vector	n_hit;
 	double		l_dot_n;
 
+	obj = NULL;
 	t = hit_object(ray, params.obj_set, &obj);
 	p_hit = ray_at(ray, t);
 	n_hit = get_normal(p_hit, params.camera->coord, obj);

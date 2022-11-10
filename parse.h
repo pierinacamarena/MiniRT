@@ -23,6 +23,7 @@
 # include "free.h"
 # include "list.h"
 # include "utils.h"
+# include "check_params.h"
 
 typedef struct s_parse_utils {
 	t_token		token;

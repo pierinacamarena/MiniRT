@@ -19,7 +19,7 @@
 # include "params.h"
 
 # define RATIO 1.7777777
-# define WIDTH 1050
+# define WIDTH 200
 # define FOCAL_LEN 1.0
 # define ESC	65307
 # define ENTER 65293

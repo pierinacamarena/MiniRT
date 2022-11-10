@@ -16,9 +16,6 @@
 # include "color.h"
 # include "vector.h"
 
-# define MISSING_LIGHT 0x1
-# define MISSING_CAM 0x2
-# define MISSING_AMBIENT 0x4
 # define SPHERE 0x1
 # define CYLINDER 0x2
 # define PLANE 0x4

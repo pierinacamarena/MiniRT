@@ -30,7 +30,7 @@ typedef struct s_vars {
 	double		discr;
 }	t_vars;
 
-double	hit_object(t_ray, t_obj *obj_set, t_obj *obj);
+double	hit_object(t_ray, t_obj *obj_set, t_obj **obj);
 void	set_vectors(t_ray ray, t_cylinder cylinder, t_vars *var);
 void	set_doubles(t_ray ray, t_cylinder cylinder, t_vars *var);
 

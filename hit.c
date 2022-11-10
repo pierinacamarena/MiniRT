@@ -69,7 +69,7 @@ static double	hit_cylinder(t_ray ray, t_cylinder cylinder)
 	return (var.t);
 }
 
-double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
+double	hit_object(t_ray ray, t_obj *obj_set, t_obj **obj)
 {
 	double	t;
 	double	temp;
@@ -85,7 +85,7 @@ double	hit_object(t_ray ray, t_obj *obj_set, t_obj *obj)
 			temp = hit_cylinder(ray, obj_set->cylinder);
 		if (temp > 0.0 && temp < t)
 		{
-			*obj = *obj_set;
+			*obj = obj_set;
 			t = temp;
 		}
 		obj_set = obj_set->next;

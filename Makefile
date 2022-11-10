@@ -24,7 +24,11 @@ OBJS	=	main.o\
 			init_obj2.o\
 			parse_utils.o\
 			init_obj_utils.o\
-			light.o
+			light.o\
+			check_params.o\
+			check_params_utils.o\
+			check_params_utils2.o\
+			print_param_error.o
 
 HEADS	=	params.h\
 			vector.h\

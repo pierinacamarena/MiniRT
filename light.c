@@ -47,7 +47,7 @@ t_vector n_hit, t_params params)
 int	is_in_shadow(t_vector p_hit, t_vector n_hit, t_params params)
 {
 	t_vector	dir_light;
-	t_obj		obj;
+	t_obj		*obj;
 	double		t;
 	double		dist;
 	double		shadow_bias;
