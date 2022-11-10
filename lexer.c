@@ -65,24 +65,22 @@ t_token	get_param_token(t_scanner *scanner)
 
 	type = INT_TOKEN;
 	c = advance(scanner);
-	if (c == ',')
-		return (make_token(COMMA_TOKEN, *scanner));
-	else if (c == '\n')
-		return (make_token(NEWLINE_TOKEN, *scanner));
 	if (c == '+' || c == '-')
 		c = advance(scanner);
-	if (!isdigit(c))
+	if (!ft_isdigit(c))
 		return (make_token(ERROR_TOKEN, *scanner));
-	while (isdigit(c))
+	while (ft_isdigit(c))
 		c = advance(scanner);
 	if (c == '.')
 	{
 		type = FLOAT_TOKEN;
 		c = advance(scanner);
 	}
-	while (isdigit(c))
+	while (ft_isdigit(c))
 		c = advance(scanner);
 	scanner->current--;
+	if (len_scan(*scanner) > MAX_LEXEME_LEN)
+		return (make_token(ERROR_LEN_TOKEN, *scanner));
 	return (make_token(type, *scanner));
 }
 
@@ -93,6 +91,16 @@ t_token	scan_token(t_scanner *scanner)
 		return (make_token(EOF_TOKEN, *scanner));
 	else if (isalpha(peek(*scanner)))
 		return (get_id_token(scanner));
+	else if (peek(*scanner) == ',')
+	{
+		advance(scanner);
+		return (make_token(COMMA_TOKEN, *scanner));
+	}
+	else if (peek(*scanner) == '\n')
+	{
+		advance(scanner);
+		return (make_token(NEWLINE_TOKEN, *scanner));
+	}
 	else
 		return (get_param_token(scanner));
 }

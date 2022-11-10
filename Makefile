@@ -28,7 +28,7 @@ OBJS	=	main.o\
 			check_params.o\
 			check_params_utils.o\
 			check_params_utils2.o\
-			print_param_error.o
+			print_error.o
 
 HEADS	=	params.h\
 			vector.h\
@@ -44,7 +44,8 @@ HEADS	=	params.h\
 			utils.h\
 			hit.h\
 			init.h\
-			color_image.h
+			color_image.h\
+			check_params.h
 
 MLX		=	mlx_linux
 
