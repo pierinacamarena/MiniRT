@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 12:24:18 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/11 12:24:19 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:26:29 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ int	check_orient_limit(t_vector orient)
 		return (ORIENT_LIMIT);
 	else if (orient.z < -1.0 || orient.z > 1.0)
 		return (ORIENT_LIMIT);
+	else if (vec_dot(orient, orient) == 0.0)
+		return (ZERO_ORIENT);
 	return (0);
 }
 

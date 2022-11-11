@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 12:25:38 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/11 12:25:42 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:24:34 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # define MISSING_CAM 0x20
 # define MISSING_LIGHT 0x40
 # define MISSING_AMBIENT 0x80
+# define ZERO_ORIENT 0x400
 
 int		check_coord_limit(t_vector coord);
 int		check_orient_limit(t_vector orient);

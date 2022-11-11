@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 12:25:21 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/11 12:25:25 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:25:46 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	print_param_error(int error)
 		printf("Missing light\n");
 	if ((error & MISSING_AMBIENT) != 0)
 		printf("Missing ambient\n");
+	if ((error & ZERO_ORIENT) != 0)
+		printf("Orientation vector cannot be the null vector\n");
 }
 
 void	print_token_error(const char *err_msg, int line, t_token token)
