@@ -6,11 +6,22 @@
 /*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 23:13:45 by pcamaren          #+#    #+#             */
-/*   Updated: 2022/11/09 15:04:01 by pcamaren         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:16:29 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ray_color.h"
+
+static int	is_spec(t_obj *obj)
+{
+	if (obj->type == SPHERE)
+		return (obj->sphere.spec);
+	else if (obj->type == PLANE)
+		return (obj->plane.spec);
+	else if (obj->type == CYLINDER)
+		return (obj->cylinder.spec);
+	return (0);
+}
 
 double	calc_specular(t_params params, t_vector dir_light, \
 t_vector n_hit, t_vector p_hit)
@@ -29,17 +40,18 @@ t_vector n_hit, t_vector p_hit)
 	return (POWER * pow(max(0.0, vec_dot(n_hit, h)), SHININESS) / r2);
 }
 
-double	light_dot_normal(t_light light, t_vector p_hit, \
-t_vector n_hit, t_params params)
+double	light_dot_normal(t_params params, t_vector p_hit, \
+t_vector n_hit, t_obj *obj)
 {
 	t_vector	dir_light;
 	double		specular;
 	double		r2;
 
 	specular = 0.0;
-	dir_light = vec_diff(light.coord, p_hit);
+	dir_light = vec_diff(params.light->coord, p_hit);
 	r2 = vec_dot(dir_light, dir_light);
-	specular = calc_specular(params, dir_light, n_hit, p_hit);
+	if (is_spec(obj))
+		specular = calc_specular(params, dir_light, n_hit, p_hit);
 	dir_light = unit_vec(dir_light);
 	return ((POWER / r2 * max(0.0, vec_dot(dir_light, n_hit)) + specular));
 }

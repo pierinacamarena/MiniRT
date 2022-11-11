@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 17:42:53 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 17:42:55 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:58:00 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define SPHERE_TOKEN 0x8
 # define PLANE_TOKEN 0x10
 # define CYLINDER_TOKEN 0x20
+# define SPECULAR_TOKEN 0x400
 # define INT_TOKEN 0x40
 # define FLOAT_TOKEN 0x80
 # define COMMA_TOKEN 0x100

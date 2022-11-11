@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 11:12:05 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 11:17:04 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:18:58 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static inline int	get_type(char *lexeme)
 		return (PLANE_TOKEN);
 	else if (strcmp("cy", lexeme) == 0)
 		return (CYLINDER_TOKEN);
+	else if (strcmp("spec", lexeme) == 0)
+		return (SPECULAR_TOKEN);
 	else
 		return (ERROR_TOKEN);
 }

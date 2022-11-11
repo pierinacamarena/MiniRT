@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 17:45:36 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 17:46:01 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:00:33 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_sphere {
 	t_vector	coord;
 	double		diameter;
 	t_color		rgb;
+	int			spec;
 }	t_sphere;
 
 typedef struct s_cylinder {
@@ -51,12 +52,14 @@ typedef struct s_cylinder {
 	double		diameter;
 	double		height;
 	t_color		rgb;
+	int			spec;
 }	t_cylinder;
 
 typedef struct s_plane {
 	t_vector	coord;
 	t_vector	orient;
 	t_color		rgb;
+	int			spec;
 }	t_plane;
 
 typedef struct s_obj {

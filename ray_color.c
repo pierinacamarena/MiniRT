@@ -6,31 +6,11 @@
 /*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 23:23:44 by pcamaren          #+#    #+#             */
-/*   Updated: 2022/11/09 15:50:22 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 17:09:26 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ray_color.h"
-
-t_vector	color_to_vec(t_color color)
-{
-	t_vector	vec;
-
-	vec.x = (double)color.red;
-	vec.y = (double)color.green;
-	vec.z = (double)color.blue;
-	return (vec);
-}
-
-t_color	vec_to_color(t_vector vec)
-{
-	t_color	color;
-
-	color.red = (int)min(255.0, max(0.0, vec.x));
-	color.green = (int)min(255.0, max(0.0, vec.y));
-	color.blue = (int)min(255.0, max(0.0, vec.z));
-	return (color);
-}
 
 int	get_color(t_obj *obj, t_ambient ambient, t_light light, double l_dot_n)
 {
@@ -100,7 +80,7 @@ int	ray_color(t_ray ray, t_params params)
 	{
 		l_dot_n = 0.0;
 		if (!is_in_shadow(p_hit, n_hit, params))
-			l_dot_n = light_dot_normal(*params.light, p_hit, n_hit, params);
+			l_dot_n = light_dot_normal(params, p_hit, n_hit, obj);
 		return (get_color(obj, *params.ambient, *params.light, l_dot_n));
 	}
 	return (0);

@@ -6,20 +6,11 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 10:56:57 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/11 16:12:21 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:53:31 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "init.h"
-
-static void	print_read_error(int count)
-{
-	printf("Error\n");
-	if (count == -1)
-		perror("read");
-	else
-		printf("Empty file\n");
-}
 
 static char	*read_file(int fd)
 {
@@ -41,9 +32,9 @@ static char	*read_file(int fd)
 		count = read(fd, buf, BUFSIZE);
 		buf[count] = '\0';
 	}
-	if (count <= 0)
+	if (count == -1)
 	{
-		print_read_error(count);
+		perror("read");
 		free(file_contents);
 		return (NULL);
 	}
