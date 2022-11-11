@@ -6,11 +6,20 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 10:56:57 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 11:10:29 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:12:21 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "init.h"
+
+static void	print_read_error(int count)
+{
+	printf("Error\n");
+	if (count == -1)
+		perror("read");
+	else
+		printf("Empty file\n");
+}
 
 static char	*read_file(int fd)
 {
@@ -32,9 +41,9 @@ static char	*read_file(int fd)
 		count = read(fd, buf, BUFSIZE);
 		buf[count] = '\0';
 	}
-	if (count == -1)
+	if (count <= 0)
 	{
-		perror("read");
+		print_read_error(count);
 		free(file_contents);
 		return (NULL);
 	}
@@ -47,11 +56,15 @@ t_file	*init_file(const char *filename)
 
 	file = (t_file *)malloc(sizeof(t_file));
 	if (file == NULL)
+	{
+		perror("malloc");
 		return (NULL);
+	}
 	file->filename = filename;
 	file->fd = open(filename, O_RDONLY);
 	if (file->fd == -1)
 	{
+		printf("Error\n");
 		perror(filename);
 		free(file);
 		return (NULL);
@@ -72,7 +85,10 @@ t_data	*init_data(const char *filename)
 
 	data = (t_data *)malloc(sizeof(t_data));
 	if (data == NULL)
+	{
+		perror("malloc");
 		return (NULL);
+	}
 	ft_bzero(data, sizeof(t_data));
 	data->file = init_file(filename);
 	if (data->file == NULL)

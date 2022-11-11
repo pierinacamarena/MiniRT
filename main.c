@@ -6,7 +6,7 @@
 /*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:03:22 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 16:35:05 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:04:36 by rbourdil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ int	main(int argc, char *argv[])
 	}
 	check_filename(argv[1]);
 	data = init_data(argv[1]);
+	if (data == NULL)
+		return (-1);
 	color_image(data->params, data->img);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->mlx_win, \
 data->img->img, 0, 0);
