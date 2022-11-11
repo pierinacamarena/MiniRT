@@ -6,7 +6,7 @@
 /*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 14:48:27 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/11 14:46:40 by pcamaren         ###   ########.fr       */
+/*   Updated: 2022/11/11 14:52:04 by pcamaren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static t_vector	get_dir(double u, double v, t_camera camera)
 	temp = vec_create(0, 1, 0);
 	right = vec_cross(camera.orient, temp);
 	up = vec_cross(right, camera.orient);
-	if (is_zero(right))
+	if (vec_dot(right,right) == 0.0)
 	{
 		temp = vec_create(0, 0, 1);
 		right = vec_cross(camera.orient, temp);
