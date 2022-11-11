@@ -6,7 +6,7 @@
 /*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 23:26:55 by pcamaren          #+#    #+#             */
-/*   Updated: 2022/11/07 23:27:29 by pcamaren         ###   ########.fr       */
+/*   Updated: 2022/11/11 14:47:54 by pcamaren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,11 @@ inline t_vector	unit_vec(t_vector v)
 inline void	vec_print(t_vector v)
 {
 	printf("[[ %f ]\n [ %f ]\n [ %f ]]\n", v.x, v.y, v.z);
+}
+
+inline int	is_zero(t_vector v)
+{
+	if (v.x == 0.0 && v.y == 0.0 && v.z == 0.0)
+		return (1);
+	return (0);
 }

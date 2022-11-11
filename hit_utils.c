@@ -6,7 +6,7 @@
 /*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 23:04:01 by pcamaren          #+#    #+#             */
-/*   Updated: 2022/11/09 15:40:26 by pcamaren         ###   ########.fr       */
+/*   Updated: 2022/11/11 14:43:00 by pcamaren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 void	set_vectors(t_ray ray, t_cylinder cylinder, t_vars *var)
 {
 	var->vup = vec_create(0, 1, 0);
-	var->right = unit_vec(vec_cross(unit_vec(cylinder.orient), var->vup));
-	if (vec_dot(var->vup, var->right) != 0)
-		var->right = unit_vec(vec_cross(unit_vec(cylinder.orient), \
-		vec_create(1, 0, 0)));
-	var->up = unit_vec(vec_cross(var->right, unit_vec(cylinder.orient)));
+	var->right = vec_cross(unit_vec(cylinder.orient), var->vup);
+	var->up = vec_cross(var->right, unit_vec(cylinder.orient));
+	if (is_zero(var->right))
+	{
+		var->right = vec_cross(unit_vec(cylinder.orient), \
+		vec_create(1, 0, 0));
+		var->up = vec_cross(unit_vec(cylinder.orient), var->right);
+	}
+	var->right = unit_vec(var->right);
+	var->up = unit_vec(var->up);
 	var->oc = vec_diff(ray.orig, cylinder.coord);
 }
 

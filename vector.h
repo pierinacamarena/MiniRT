@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbourdil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pcamaren <pcamaren@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 17:58:15 by rbourdil          #+#    #+#             */
-/*   Updated: 2022/11/09 17:58:25 by rbourdil         ###   ########.fr       */
+/*   Updated: 2022/11/11 14:41:26 by pcamaren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_vector		vec_cross(t_vector v, t_vector w);
 double			vec_dot(t_vector v, t_vector w);
 double			vec_length(t_vector v);
 t_vector		unit_vec(t_vector v);
+int				is_zero(t_vector v);
 
 void			vec_print(t_vector v);
 
